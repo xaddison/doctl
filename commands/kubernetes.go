@@ -15,9 +15,7 @@ package commands
 
 import (
 	"context"
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
 	"os"
@@ -35,7 +33,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	clientauthentication "k8s.io/client-go/pkg/apis/clientauthentication/v1beta1"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -759,21 +756,11 @@ func (s *KubernetesCommandService) RunKubernetesKubeconfigExecCredential(c *CmdC
 		return json.NewEncoder(c.Out).Encode(execCredential)
 	}
 
-	kubeconfig, err := kube.GetKubeConfig(clusterID)
+	execCredential, err := kube.GetKubeConfigExecCredential(clusterID)
 	if err != nil {
 		if errResponse, ok := err.(*godo.ErrorResponse); ok {
 			return fmt.Errorf("failed to fetch credentials for cluster %q: %v", clusterID, errResponse.Message)
 		}
-		return err
-	}
-
-	config, err := clientcmd.Load(kubeconfig)
-	if err != nil {
-		return err
-	}
-
-	execCredential, err = execCredentialFromConfig(config)
-	if err != nil {
 		return err
 	}
 
@@ -783,42 +770,6 @@ func (s *KubernetesCommandService) RunKubernetesKubeconfigExecCredential(c *CmdC
 	}
 
 	return json.NewEncoder(c.Out).Encode(execCredential)
-}
-
-func execCredentialFromConfig(config *clientcmdapi.Config) (*clientauthentication.ExecCredential, error) {
-	current := config.CurrentContext
-	context, ok := config.Contexts[current]
-	if !ok {
-		return nil, fmt.Errorf("received invalid config Context %q from API. Please file an issue at https://github.com/digitalocean/doctl/issues/new mentioning this error", current)
-	}
-
-	authInfo, ok := config.AuthInfos[context.AuthInfo]
-	if !ok {
-		return nil, fmt.Errorf("received invalid config AuthInfo %q from API. Please file an issue at https://github.com/digitalocean/doctl/issues/new mentioning this error", context.AuthInfo)
-	}
-
-	var t *metav1.Time
-	// Attempt to parse certificate to extract expiration. If it fails that's OK, maybe we've migrated to tokens
-	block, _ := pem.Decode(authInfo.ClientCertificateData)
-	if cert, err := x509.ParseCertificate(block.Bytes); err == nil && !cert.NotAfter.IsZero() {
-		// Expire the credentials 10 minutes before NotAfter to account for clock skew
-		t = &metav1.Time{Time: cert.NotAfter.Add(-10 * time.Minute)}
-	}
-
-	execCredential := &clientauthentication.ExecCredential{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "ExecCredential",
-			APIVersion: clientauthentication.SchemeGroupVersion.String(),
-		},
-		Status: &clientauthentication.ExecCredentialStatus{
-			ClientCertificateData: string(authInfo.ClientCertificateData),
-			ClientKeyData:         string(authInfo.ClientKeyData),
-			ExpirationTimestamp:   t,
-			Token:                 authInfo.Token,
-		},
-	}
-
-	return execCredential, nil
 }
 
 // RunKubernetesKubeconfigSave retrieves an existing kubernetes config and saves it to your local kubeconfig.

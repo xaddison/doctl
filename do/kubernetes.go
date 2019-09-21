@@ -63,6 +63,7 @@ type KubernetesNodeSize struct {
 type KubernetesService interface {
 	Get(clusterID string) (*KubernetesCluster, error)
 	GetKubeConfig(clusterID string) ([]byte, error)
+	GetKubeConfigExecCredential(clusterID string) ([]byte, error)
 	GetUpgrades(clusterID string) (KubernetesVersions, error)
 	List() (KubernetesClusters, error)
 	Create(create *godo.KubernetesClusterCreateRequest) (*KubernetesCluster, error)
@@ -113,6 +114,15 @@ func (k8s *kubernetesClusterService) GetKubeConfig(clusterID string) ([]byte, er
 	}
 
 	return config.KubeconfigYAML, nil
+}
+
+func (k8s *kubernetesClusterService) GetKubeConfigExecCredential(clusterID string) (*KubeConfigExecCredential, error) {
+	execCredential, _, err := k8s.client.GetKubeConfigExecCredential(context.TODO(), clusterID)
+	if err != nil {
+		return nil, err
+	}
+
+	return execCredential, nil
 }
 
 func (k8s *kubernetesClusterService) GetUpgrades(clusterID string) (KubernetesVersions, error) {
