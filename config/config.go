@@ -19,17 +19,6 @@ import (
 
 var RootConfig *viper.Viper
 
-func Load(v *viper.Viper, cfgFile string) (*viper.Viper, error) {
-	v.SetConfigFile(cfgFile)
-
-	err := v.ReadInConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	return v, nil
-}
-
 func init() {
 	RootConfig = viper.New()
 }
