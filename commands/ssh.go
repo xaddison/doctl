@@ -38,6 +38,7 @@ func SSH(parent *Command) *Command {
 	path := filepath.Join(usr.HomeDir, ".ssh", "id_rsa")
 
 	cmdSSH := CmdBuilder(parent, RunSSH, "ssh <droplet-id|host>", "ssh to droplet", Writer)
+	
 	AddStringFlag(cmdSSH, doctl.ArgSSHUser, "", "root", "ssh user")
 	AddStringFlag(cmdSSH, doctl.ArgsSSHKeyPath, "", path, "path to private ssh key")
 	AddIntFlag(cmdSSH, doctl.ArgsSSHPort, "", 22, "port sshd is running on")
@@ -60,33 +61,33 @@ func RunSSH(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	user, err := c.Doit.GetString(c.NS, doctl.ArgSSHUser)
+	user, err := c.Config.GetString(c.NS, doctl.ArgSSHUser)
 	if err != nil {
 		return err
 	}
 
-	keyPath, err := c.Doit.GetString(c.NS, doctl.ArgsSSHKeyPath)
+	keyPath, err := c.Config.GetString(c.NS, doctl.ArgsSSHKeyPath)
 	if err != nil {
 		return err
 	}
 
-	port, err := c.Doit.GetInt(c.NS, doctl.ArgsSSHPort)
+	port, err := c.Config.GetInt(c.NS, doctl.ArgsSSHPort)
 	if err != nil {
 		return err
 	}
 
 	var opts = make(ssh.Options)
-	opts[doctl.ArgsSSHAgentForwarding], err = c.Doit.GetBool(c.NS, doctl.ArgsSSHAgentForwarding)
+	opts[doctl.ArgsSSHAgentForwarding], err = c.Config.GetBool(c.NS, doctl.ArgsSSHAgentForwarding)
 	if err != nil {
 		return err
 	}
 
-	opts[doctl.ArgSSHCommand], err = c.Doit.GetString(c.NS, doctl.ArgSSHCommand)
+	opts[doctl.ArgSSHCommand], err = c.Config.GetString(c.NS, doctl.ArgSSHCommand)
 	if err != nil {
 		return nil
 	}
 
-	privateIPChoice, err := c.Doit.GetBool(c.NS, doctl.ArgsSSHPrivateIP)
+	privateIPChoice, err := c.Config.GetBool(c.NS, doctl.ArgsSSHPrivateIP)
 	if err != nil {
 		return err
 	}
@@ -150,7 +151,7 @@ func RunSSH(c *CmdConfig) error {
 		return errors.New("could not find droplet address")
 	}
 
-	runner := c.Doit.SSH(user, ip, keyPath, port, opts)
+	runner := c.SSH(user, ip, keyPath, port, opts)
 	return runner.Run()
 }
 

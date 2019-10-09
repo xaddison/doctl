@@ -98,7 +98,7 @@ func RunCmdTagDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}

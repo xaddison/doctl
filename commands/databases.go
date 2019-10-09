@@ -138,37 +138,37 @@ func RunDatabaseCreate(c *CmdConfig) error {
 func buildDatabaseCreateRequestFromArgs(c *CmdConfig) (*godo.DatabaseCreateRequest, error) {
 	r := &godo.DatabaseCreateRequest{Name: c.Args[0]}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return nil, err
 	}
 	r.Region = region
 
-	numNodes, err := c.Doit.GetInt(c.NS, doctl.ArgDatabaseNumNodes)
+	numNodes, err := c.Config.GetInt(c.NS, doctl.ArgDatabaseNumNodes)
 	if err != nil {
 		return nil, err
 	}
 	r.NumNodes = numNodes
 
-	size, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+	size, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 	if err != nil {
 		return nil, err
 	}
 	r.SizeSlug = size
 
-	engine, err := c.Doit.GetString(c.NS, doctl.ArgDatabaseEngine)
+	engine, err := c.Config.GetString(c.NS, doctl.ArgDatabaseEngine)
 	if err != nil {
 		return nil, err
 	}
 	r.EngineSlug = engine
 
-	version, err := c.Doit.GetString(c.NS, doctl.ArgVersion)
+	version, err := c.Config.GetString(c.NS, doctl.ArgVersion)
 	if err != nil {
 		return nil, err
 	}
 	r.Version = version
 
-	privateNetworkUUID, err := c.Doit.GetString(c.NS, doctl.ArgPrivateNetworkUUID)
+	privateNetworkUUID, err := c.Config.GetString(c.NS, doctl.ArgPrivateNetworkUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -183,7 +183,7 @@ func RunDatabaseDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -263,13 +263,13 @@ func RunDatabaseResize(c *CmdConfig) error {
 func buildDatabaseResizeRequestFromArgs(c *CmdConfig) (*godo.DatabaseResizeRequest, error) {
 	r := &godo.DatabaseResizeRequest{}
 
-	numNodes, err := c.Doit.GetInt(c.NS, doctl.ArgDatabaseNumNodes)
+	numNodes, err := c.Config.GetInt(c.NS, doctl.ArgDatabaseNumNodes)
 	if err != nil {
 		return nil, err
 	}
 	r.NumNodes = numNodes
 
-	size, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+	size, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 	if err != nil {
 		return nil, err
 	}
@@ -297,13 +297,13 @@ func RunDatabaseMigrate(c *CmdConfig) error {
 func buildDatabaseMigrateRequestFromArgs(c *CmdConfig) (*godo.DatabaseMigrateRequest, error) {
 	r := &godo.DatabaseMigrateRequest{}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return nil, err
 	}
 	r.Region = region
 
-	privateNetworkUUID, err := c.Doit.GetString(c.NS, doctl.ArgPrivateNetworkUUID)
+	privateNetworkUUID, err := c.Config.GetString(c.NS, doctl.ArgPrivateNetworkUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -377,13 +377,13 @@ func RunDatabaseMaintenanceUpdate(c *CmdConfig) error {
 func buildDatabaseUpdateMaintenanceRequestFromArgs(c *CmdConfig) (*godo.DatabaseUpdateMaintenanceRequest, error) {
 	r := &godo.DatabaseUpdateMaintenanceRequest{}
 
-	day, err := c.Doit.GetString(c.NS, doctl.ArgDatabaseMaintenanceDay)
+	day, err := c.Config.GetString(c.NS, doctl.ArgDatabaseMaintenanceDay)
 	if err != nil {
 		return nil, err
 	}
 	r.Day = strings.ToLower(day)
 
-	hour, err := c.Doit.GetString(c.NS, doctl.ArgDatabaseMaintenanceHour)
+	hour, err := c.Config.GetString(c.NS, doctl.ArgDatabaseMaintenanceHour)
 	if err != nil {
 		return nil, err
 	}
@@ -476,7 +476,7 @@ func RunDatabaseUserDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -589,25 +589,25 @@ func RunDatabasePoolCreate(c *CmdConfig) error {
 func buildDatabaseCreatePoolRequestFromArgs(c *CmdConfig) (*godo.DatabaseCreatePoolRequest, error) {
 	req := &godo.DatabaseCreatePoolRequest{Name: c.Args[1]}
 
-	mode, err := c.Doit.GetString(c.NS, doctl.ArgDatabasePoolMode)
+	mode, err := c.Config.GetString(c.NS, doctl.ArgDatabasePoolMode)
 	if err != nil {
 		return nil, err
 	}
 	req.Mode = mode
 
-	size, err := c.Doit.GetInt(c.NS, doctl.ArgDatabasePoolSize)
+	size, err := c.Config.GetInt(c.NS, doctl.ArgDatabasePoolSize)
 	if err != nil {
 		return nil, err
 	}
 	req.Size = size
 
-	db, err := c.Doit.GetString(c.NS, doctl.ArgDatabasePoolDBName)
+	db, err := c.Config.GetString(c.NS, doctl.ArgDatabasePoolDBName)
 	if err != nil {
 		return nil, err
 	}
 	req.Database = db
 
-	user, err := c.Doit.GetString(c.NS, doctl.ArgDatabasePoolUserName)
+	user, err := c.Config.GetString(c.NS, doctl.ArgDatabasePoolUserName)
 	if err != nil {
 		return nil, err
 	}
@@ -622,7 +622,7 @@ func RunDatabasePoolDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -723,7 +723,7 @@ func RunDatabaseDBDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -840,19 +840,19 @@ func RunDatabaseReplicaCreate(c *CmdConfig) error {
 func buildDatabaseCreateReplicaRequestFromArgs(c *CmdConfig) (*godo.DatabaseCreateReplicaRequest, error) {
 	r := &godo.DatabaseCreateReplicaRequest{Name: c.Args[1]}
 
-	size, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+	size, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 	if err != nil {
 		return nil, err
 	}
 	r.Size = size
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return nil, err
 	}
 	r.Region = region
 
-	privateNetworkUUID, err := c.Doit.GetString(c.NS, doctl.ArgPrivateNetworkUUID)
+	privateNetworkUUID, err := c.Config.GetString(c.NS, doctl.ArgPrivateNetworkUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -867,7 +867,7 @@ func RunDatabaseReplicaDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}

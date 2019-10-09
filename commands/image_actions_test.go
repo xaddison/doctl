@@ -33,7 +33,7 @@ func TestImageActionsGet(t *testing.T) {
 
 		config.Args = append(config.Args, "1")
 
-		config.Doit.Set(config.NS, doctl.ArgActionID, 2)
+		config.Config.Set(config.NS, doctl.ArgActionID, 2)
 
 		err := RunImageActionsGet(config)
 		assert.NoError(t, err)
@@ -48,7 +48,7 @@ func TestImageActionsTransfer(t *testing.T) {
 
 		config.Args = append(config.Args, "1")
 
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, "dev0")
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, "dev0")
 
 		err := RunImageActionsTransfer(config)
 		assert.NoError(t, err)

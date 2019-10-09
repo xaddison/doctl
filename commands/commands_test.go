@@ -22,10 +22,10 @@ import (
 	"github.com/digitalocean/doctl/config"
 	"github.com/digitalocean/doctl/do"
 	domocks "github.com/digitalocean/doctl/do/mocks"
-	"github.com/digitalocean/doctl/commands/internal"
+	"github.com/digitalocean/doctl/pkg/ssh"
 
 	"github.com/digitalocean/godo"
-	
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -205,15 +205,16 @@ func withTestClient(t *testing.T, tFn testFn) {
 	}
 
 	config := &CmdConfig{
-		NS:   "test",
-		Doit: internal.NewTestConfig(),
-		Out:  ioutil.Discard,
+		NS:     "test",
+		Out:    ioutil.Discard,
+		Config: config.NewConfig(),
+		SSH:    func(user, host, keyPath string, port int, opts ssh.Options) *ssh.Runner { return nil },
 
 		// can stub this out, since the return is dictated by the mocks.
 		initServices: func(c *CmdConfig) error { return nil },
 
 		getContextAccessToken: func() string {
-			return config.RootConfig.GetString(doctl.ArgAccessToken)
+			return DoitCmd.CmdConfigConfig.V.GetString(doctl.ArgAccessToken)
 		},
 
 		setContextAccessToken: func(token string) {},

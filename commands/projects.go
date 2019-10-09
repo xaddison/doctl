@@ -168,7 +168,7 @@ func RunProjectsDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func RunProjectResourcesAssign(c *CmdConfig) error {
 	}
 	projectUUID := c.Args[0]
 
-	urns, err := c.Doit.GetStringSlice(c.NS, doctl.ArgProjectResource)
+	urns, err := c.Config.GetStringSlice(c.NS, doctl.ArgProjectResource)
 	if err != nil {
 		return err
 	}
@@ -279,25 +279,25 @@ func validateURN(urn string) ([]string, bool) {
 }
 
 func buildProjectsCreateRequestFromArgs(c *CmdConfig, r *godo.CreateProjectRequest) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgProjectName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgProjectName)
 	if err != nil {
 		return err
 	}
 	r.Name = name
 
-	purpose, err := c.Doit.GetString(c.NS, doctl.ArgProjectPurpose)
+	purpose, err := c.Config.GetString(c.NS, doctl.ArgProjectPurpose)
 	if err != nil {
 		return err
 	}
 	r.Purpose = purpose
 
-	description, err := c.Doit.GetString(c.NS, doctl.ArgProjectDescription)
+	description, err := c.Config.GetString(c.NS, doctl.ArgProjectDescription)
 	if err != nil {
 		return err
 	}
 	r.Description = description
 
-	environment, err := c.Doit.GetString(c.NS, doctl.ArgProjectEnvironment)
+	environment, err := c.Config.GetString(c.NS, doctl.ArgProjectEnvironment)
 	if err != nil {
 		return err
 	}
@@ -307,40 +307,40 @@ func buildProjectsCreateRequestFromArgs(c *CmdConfig, r *godo.CreateProjectReque
 }
 
 func buildProjectsUpdateRequestFromArgs(c *CmdConfig, r *godo.UpdateProjectRequest) error {
-	if c.Doit.IsSet(c.NS, doctl.ArgProjectName) {
-		name, err := c.Doit.GetString(c.NS, doctl.ArgProjectName)
+	if c.Config.IsSet(c.NS, doctl.ArgProjectName) {
+		name, err := c.Config.GetString(c.NS, doctl.ArgProjectName)
 		if err != nil {
 			return err
 		}
 		r.Name = name
 	}
 
-	if c.Doit.IsSet(c.NS, doctl.ArgProjectPurpose) {
-		purpose, err := c.Doit.GetString(c.NS, doctl.ArgProjectPurpose)
+	if c.Config.IsSet(c.NS, doctl.ArgProjectPurpose) {
+		purpose, err := c.Config.GetString(c.NS, doctl.ArgProjectPurpose)
 		if err != nil {
 			return err
 		}
 		r.Purpose = purpose
 	}
 
-	if c.Doit.IsSet(c.NS, doctl.ArgProjectDescription) {
-		description, err := c.Doit.GetString(c.NS, doctl.ArgProjectDescription)
+	if c.Config.IsSet(c.NS, doctl.ArgProjectDescription) {
+		description, err := c.Config.GetString(c.NS, doctl.ArgProjectDescription)
 		if err != nil {
 			return err
 		}
 		r.Description = description
 	}
 
-	if c.Doit.IsSet(c.NS, doctl.ArgProjectEnvironment) {
-		environment, err := c.Doit.GetString(c.NS, doctl.ArgProjectEnvironment)
+	if c.Config.IsSet(c.NS, doctl.ArgProjectEnvironment) {
+		environment, err := c.Config.GetString(c.NS, doctl.ArgProjectEnvironment)
 		if err != nil {
 			return err
 		}
 		r.Environment = environment
 	}
 
-	if c.Doit.IsSet(c.NS, doctl.ArgProjectIsDefault) {
-		isDefault, err := c.Doit.GetBool(c.NS, doctl.ArgProjectIsDefault)
+	if c.Config.IsSet(c.NS, doctl.ArgProjectIsDefault) {
+		isDefault, err := c.Config.GetBool(c.NS, doctl.ArgProjectIsDefault)
 		if err != nil {
 			return err
 		}

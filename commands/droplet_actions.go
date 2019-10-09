@@ -33,7 +33,7 @@ func performAction(c *CmdConfig, fn actionFn) error {
 		return err
 	}
 
-	wait, err := c.Doit.GetBool(c.NS, doctl.ArgCommandWait)
+	wait, err := c.Config.GetBool(c.NS, doctl.ArgCommandWait)
 	if err != nil {
 		return err
 	}
@@ -166,7 +166,7 @@ func RunDropletActionGet(c *CmdConfig) error {
 			return nil, err
 		}
 
-		actionID, err := c.Doit.GetInt(c.NS, doctl.ArgActionID)
+		actionID, err := c.Config.GetInt(c.NS, doctl.ArgActionID)
 		if err != nil {
 			return nil, err
 		}
@@ -376,7 +376,7 @@ func RunDropletActionRestore(c *CmdConfig) error {
 			return nil, err
 		}
 
-		image, err := c.Doit.GetInt(c.NS, doctl.ArgImageID)
+		image, err := c.Config.GetInt(c.NS, doctl.ArgImageID)
 		if err != nil {
 			return nil, err
 		}
@@ -401,12 +401,12 @@ func RunDropletActionResize(c *CmdConfig) error {
 			return nil, err
 		}
 
-		size, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+		size, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 		if err != nil {
 			return nil, err
 		}
 
-		disk, err := c.Doit.GetBool(c.NS, doctl.ArgResizeDisk)
+		disk, err := c.Config.GetBool(c.NS, doctl.ArgResizeDisk)
 		if err != nil {
 			return nil, err
 		}
@@ -430,7 +430,7 @@ func RunDropletActionRebuild(c *CmdConfig) error {
 			return nil, err
 		}
 
-		image, err := c.Doit.GetString(c.NS, doctl.ArgImage)
+		image, err := c.Config.GetString(c.NS, doctl.ArgImage)
 		if err != nil {
 			return nil, err
 		}
@@ -459,7 +459,7 @@ func RunDropletActionRename(c *CmdConfig) error {
 			return nil, err
 		}
 
-		name, err := c.Doit.GetString(c.NS, doctl.ArgDropletName)
+		name, err := c.Config.GetString(c.NS, doctl.ArgDropletName)
 		if err != nil {
 			return nil, err
 		}
@@ -483,7 +483,7 @@ func RunDropletActionChangeKernel(c *CmdConfig) error {
 			return nil, err
 		}
 
-		kernel, err := c.Doit.GetInt(c.NS, doctl.ArgKernelID)
+		kernel, err := c.Config.GetInt(c.NS, doctl.ArgKernelID)
 		if err != nil {
 			return nil, err
 		}
@@ -507,7 +507,7 @@ func RunDropletActionSnapshot(c *CmdConfig) error {
 			return nil, err
 		}
 
-		name, err := c.Doit.GetString(c.NS, doctl.ArgSnapshotName)
+		name, err := c.Config.GetString(c.NS, doctl.ArgSnapshotName)
 		if err != nil {
 			return nil, err
 		}

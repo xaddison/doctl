@@ -265,7 +265,7 @@ func TestKubernetesKubeconfigSave(t *testing.T) {
 		authContext := "not-default"
 
 		getCurrentAuthContextFn = func() string {
-			authContext, err := config.Doit.GetString(config.NS, doctl.ArgContext)
+			authContext, err := config.Config.GetString(config.NS, doctl.ArgContext)
 			assert.NoError(t, err)
 			return authContext
 		}
@@ -275,7 +275,7 @@ func TestKubernetesKubeconfigSave(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgContext, authContext)
+		config.Config.Set(config.NS, doctl.ArgContext, authContext)
 
 		k8sCmdService := testK8sCmdService()
 		err := k8sCmdService.RunKubernetesKubeconfigSave(config)
@@ -357,11 +357,11 @@ func TestKubernetesCreate(t *testing.T) {
 		tm.kubernetes.EXPECT().Create(&r).Return(&testCluster, nil)
 
 		config.Args = append(config.Args, testCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, testCluster.RegionSlug)
-		config.Doit.Set(config.NS, doctl.ArgClusterVersionSlug, testCluster.VersionSlug)
-		config.Doit.Set(config.NS, doctl.ArgTag, testCluster.Tags)
-		config.Doit.Set(config.NS, doctl.ArgMaintenanceWindow, "any=00:00")
-		config.Doit.Set(config.NS, doctl.ArgClusterNodePool, []string{
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, testCluster.RegionSlug)
+		config.Config.Set(config.NS, doctl.ArgClusterVersionSlug, testCluster.VersionSlug)
+		config.Config.Set(config.NS, doctl.ArgTag, testCluster.Tags)
+		config.Config.Set(config.NS, doctl.ArgMaintenanceWindow, "any=00:00")
+		config.Config.Set(config.NS, doctl.ArgClusterNodePool, []string{
 			fmt.Sprintf("name=%s;size=%s;count=%d;tag=%s;tag=%s;auto-scale=%v;min-nodes=%d;max-nodes=%d",
 				testNodePool.Name+"1", testNodePool.Size, testNodePool.Count, testNodePool.Tags[0], testNodePool.Tags[1],
 				testNodePool.AutoScale, testNodePool.MinNodes, testNodePool.MaxNodes,
@@ -370,7 +370,7 @@ func TestKubernetesCreate(t *testing.T) {
 				testNodePool.Name+"2", testNodePool.Size, testNodePool.Count, testNodePool.Tags[0], testNodePool.Tags[1],
 			),
 		})
-		config.Doit.Set(config.NS, doctl.ArgAutoUpgrade, testCluster.AutoUpgrade)
+		config.Config.Set(config.NS, doctl.ArgAutoUpgrade, testCluster.AutoUpgrade)
 
 		err := testK8sCmdService().RunKubernetesClusterCreate("c-8", 3)(config)
 		assert.NoError(t, err)
@@ -392,10 +392,10 @@ func TestKubernetesUpdate(t *testing.T) {
 		tm.kubernetes.EXPECT().Update(testCluster.ID, &r).Return(&testCluster, nil)
 
 		config.Args = append(config.Args, testCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgClusterName, testCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgTag, testCluster.Tags)
-		config.Doit.Set(config.NS, doctl.ArgMaintenanceWindow, "any=00:00")
-		config.Doit.Set(config.NS, doctl.ArgAutoUpgrade, false)
+		config.Config.Set(config.NS, doctl.ArgClusterName, testCluster.Name)
+		config.Config.Set(config.NS, doctl.ArgTag, testCluster.Tags)
+		config.Config.Set(config.NS, doctl.ArgMaintenanceWindow, "any=00:00")
+		config.Config.Set(config.NS, doctl.ArgAutoUpgrade, false)
 
 		err := testK8sCmdService().RunKubernetesClusterUpdate(config)
 		assert.NoError(t, err)
@@ -416,10 +416,10 @@ func TestKubernetesUpdate(t *testing.T) {
 		tm.kubernetes.EXPECT().Update(testCluster.ID, &r).Return(&testCluster, nil)
 
 		config.Args = append(config.Args, testCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgClusterName, testCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgTag, testCluster.Tags)
-		config.Doit.Set(config.NS, doctl.ArgMaintenanceWindow, "any=00:00")
-		config.Doit.Set(config.NS, doctl.ArgAutoUpgrade, false)
+		config.Config.Set(config.NS, doctl.ArgClusterName, testCluster.Name)
+		config.Config.Set(config.NS, doctl.ArgTag, testCluster.Tags)
+		config.Config.Set(config.NS, doctl.ArgMaintenanceWindow, "any=00:00")
+		config.Config.Set(config.NS, doctl.ArgAutoUpgrade, false)
 
 		err := testK8sCmdService().RunKubernetesClusterUpdate(config)
 		assert.NoError(t, err)
@@ -434,7 +434,7 @@ func TestKubernetesUpgrade(t *testing.T) {
 		tm.kubernetes.EXPECT().Upgrade(testCluster.ID, testUpgradeVersion).Return(nil)
 
 		config.Args = append(config.Args, testCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgVersion, testUpgradeVersion)
+		config.Config.Set(config.NS, doctl.ArgVersion, testUpgradeVersion)
 
 		err := testK8sCmdService().RunKubernetesClusterUpgrade(config)
 		assert.NoError(t, err)
@@ -445,7 +445,7 @@ func TestKubernetesUpgrade(t *testing.T) {
 		tm.kubernetes.EXPECT().Upgrade(testCluster.ID, testUpgradeVersion).Return(nil)
 
 		config.Args = append(config.Args, testCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgVersion, testUpgradeVersion)
+		config.Config.Set(config.NS, doctl.ArgVersion, testUpgradeVersion)
 
 		err := testK8sCmdService().RunKubernetesClusterUpgrade(config)
 		assert.NoError(t, err)
@@ -458,7 +458,7 @@ func TestKubernetesUpgrade(t *testing.T) {
 		tm.kubernetes.EXPECT().Upgrade(testCluster.ID, testUpgradeVersion).Return(nil)
 
 		config.Args = append(config.Args, testCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgVersion, defaultKubernetesLatestVersion)
+		config.Config.Set(config.NS, doctl.ArgVersion, defaultKubernetesLatestVersion)
 
 		err := testK8sCmdService().RunKubernetesClusterUpgrade(config)
 		assert.NoError(t, err)
@@ -491,7 +491,7 @@ func TestKubernetesUpgrade(t *testing.T) {
 func TestKubernetesDelete(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		// should'nt call `DeleteNodePool` so we don't set any expectations
-		config.Doit.Set(config.NS, doctl.ArgForce, "false")
+		config.Config.Set(config.NS, doctl.ArgForce, "false")
 		config.Args = append(config.Args, testCluster.ID)
 
 		err := testK8sCmdService().RunKubernetesClusterDelete(config)
@@ -502,7 +502,7 @@ func TestKubernetesDelete(t *testing.T) {
 		tm.kubernetes.EXPECT().Delete(testCluster.ID).Return(nil)
 
 		config.Args = append(config.Args, testCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := testK8sCmdService().RunKubernetesClusterDelete(config)
 		assert.NoError(t, err)
@@ -513,7 +513,7 @@ func TestKubernetesDelete(t *testing.T) {
 		tm.kubernetes.EXPECT().Delete(testCluster.ID).Return(nil)
 
 		config.Args = append(config.Args, testCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := testK8sCmdService().RunKubernetesClusterDelete(config)
 		assert.NoError(t, err)
@@ -621,13 +621,13 @@ func TestKubernetesNodePool_Create(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, testNodePool.Size)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolAutoScale, testNodePool.AutoScale)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolMinNodes, testNodePool.MinNodes)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolMaxNodes, testNodePool.MaxNodes)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, testNodePool.Size)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolAutoScale, testNodePool.AutoScale)
+		config.Config.Set(config.NS, doctl.ArgNodePoolMinNodes, testNodePool.MinNodes)
+		config.Config.Set(config.NS, doctl.ArgNodePoolMaxNodes, testNodePool.MaxNodes)
 
 		err := testK8sCmdService().RunKubernetesNodePoolCreate(config)
 		assert.NoError(t, err)
@@ -648,13 +648,13 @@ func TestKubernetesNodePool_Create(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.Name)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, testNodePool.Size)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolAutoScale, testNodePool.AutoScale)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolMinNodes, testNodePool.MinNodes)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolMaxNodes, testNodePool.MaxNodes)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, testNodePool.Size)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolAutoScale, testNodePool.AutoScale)
+		config.Config.Set(config.NS, doctl.ArgNodePoolMinNodes, testNodePool.MinNodes)
+		config.Config.Set(config.NS, doctl.ArgNodePoolMaxNodes, testNodePool.MaxNodes)
 
 		err := testK8sCmdService().RunKubernetesNodePoolCreate(config)
 		assert.NoError(t, err)
@@ -673,9 +673,9 @@ func TestKubernetesNodePool_Update(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
 
 		err := testK8sCmdService().RunKubernetesNodePoolUpdate(config)
 		assert.NoError(t, err)
@@ -692,9 +692,9 @@ func TestKubernetesNodePool_Update(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.Name, testNodePool.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
 
 		err := testK8sCmdService().RunKubernetesNodePoolUpdate(config)
 		assert.NoError(t, err)
@@ -711,9 +711,9 @@ func TestKubernetesNodePool_Update(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.Name)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
 
 		err := testK8sCmdService().RunKubernetesNodePoolUpdate(config)
 		assert.NoError(t, err)
@@ -731,9 +731,9 @@ func TestKubernetesNodePool_Update(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.Name, testNodePool.Name)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
 
 		err := testK8sCmdService().RunKubernetesNodePoolUpdate(config)
 		assert.NoError(t, err)
@@ -756,12 +756,12 @@ func TestKubernetesNodePool_Update(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
-		config.Doit.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolAutoScale, testNodePool.AutoScale)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolMinNodes, testNodePool.MinNodes)
-		config.Doit.Set(config.NS, doctl.ArgNodePoolMaxNodes, testNodePool.MaxNodes)
+		config.Config.Set(config.NS, doctl.ArgNodePoolName, testNodePool.Name)
+		config.Config.Set(config.NS, doctl.ArgNodePoolCount, testNodePool.Count)
+		config.Config.Set(config.NS, doctl.ArgTag, testNodePool.Tags)
+		config.Config.Set(config.NS, doctl.ArgNodePoolAutoScale, testNodePool.AutoScale)
+		config.Config.Set(config.NS, doctl.ArgNodePoolMinNodes, testNodePool.MinNodes)
+		config.Config.Set(config.NS, doctl.ArgNodePoolMaxNodes, testNodePool.MaxNodes)
 
 		err := testK8sCmdService().RunKubernetesNodePoolUpdate(config)
 		assert.NoError(t, err)
@@ -779,7 +779,7 @@ func TestKubernetesNodePool_Recycle(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolNodeIDs, testNode.ID)
+		config.Config.Set(config.NS, doctl.ArgNodePoolNodeIDs, testNode.ID)
 
 		err := testK8sCmdService().RunKubernetesNodePoolRecycle(config)
 		assert.NoError(t, err)
@@ -795,7 +795,7 @@ func TestKubernetesNodePool_Recycle(t *testing.T) {
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgNodePoolNodeIDs, testNode.Name)
+		config.Config.Set(config.NS, doctl.ArgNodePoolNodeIDs, testNode.Name)
 
 		err := testK8sCmdService().RunKubernetesNodePoolRecycle(config)
 		assert.NoError(t, err)
@@ -805,7 +805,7 @@ func TestKubernetesNodePool_Recycle(t *testing.T) {
 func TestKubernetesNodePool_Delete(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		// should'nt call `DeleteNodePool` so we don't set any expectations
-		config.Doit.Set(config.NS, doctl.ArgForce, "false")
+		config.Config.Set(config.NS, doctl.ArgForce, "false")
 		config.Args = append(config.Args, testCluster.ID, testNodePool.ID)
 
 		err := testK8sCmdService().RunKubernetesNodePoolDelete(config)
@@ -816,7 +816,7 @@ func TestKubernetesNodePool_Delete(t *testing.T) {
 		tm.kubernetes.EXPECT().DeleteNodePool(testCluster.ID, testNodePool.ID).Return(nil)
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.ID)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := testK8sCmdService().RunKubernetesNodePoolDelete(config)
 		assert.NoError(t, err)
@@ -827,7 +827,7 @@ func TestKubernetesNodePool_Delete(t *testing.T) {
 		tm.kubernetes.EXPECT().DeleteNodePool(testCluster.ID, testNodePool.ID).Return(nil)
 
 		config.Args = append(config.Args, testCluster.ID, testNodePool.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := testK8sCmdService().RunKubernetesNodePoolDelete(config)
 		assert.NoError(t, err)

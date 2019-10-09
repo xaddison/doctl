@@ -72,7 +72,7 @@ func RunVolumeList(c *CmdConfig) error {
 
 	al := c.Volumes()
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return nil
 	}
@@ -130,7 +130,7 @@ func RunVolumeCreate(c *CmdConfig) error {
 
 	name := c.Args[0]
 
-	sizeStr, err := c.Doit.GetString(c.NS, doctl.ArgVolumeSize)
+	sizeStr, err := c.Config.GetString(c.NS, doctl.ArgVolumeSize)
 	if err != nil {
 		return err
 	}
@@ -139,17 +139,17 @@ func RunVolumeCreate(c *CmdConfig) error {
 		return err
 	}
 
-	desc, err := c.Doit.GetString(c.NS, doctl.ArgVolumeDesc)
+	desc, err := c.Config.GetString(c.NS, doctl.ArgVolumeDesc)
 	if err != nil {
 		return err
 	}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgVolumeRegion)
+	region, err := c.Config.GetString(c.NS, doctl.ArgVolumeRegion)
 	if err != nil {
 		return err
 	}
 
-	snapshotID, err := c.Doit.GetString(c.NS, doctl.ArgVolumeSnapshot)
+	snapshotID, err := c.Config.GetString(c.NS, doctl.ArgVolumeSnapshot)
 	if err != nil {
 		return err
 	}
@@ -159,16 +159,16 @@ func RunVolumeCreate(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(errorMsg)
 	}
 
-	fsType, err := c.Doit.GetString(c.NS, doctl.ArgVolumeFilesystemType)
+	fsType, err := c.Config.GetString(c.NS, doctl.ArgVolumeFilesystemType)
 	if err != nil {
 		return err
 	}
-	fsLabel, err := c.Doit.GetString(c.NS, doctl.ArgVolumeFilesystemLabel)
+	fsLabel, err := c.Config.GetString(c.NS, doctl.ArgVolumeFilesystemLabel)
 	if err != nil {
 		return err
 	}
 
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTag)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTag)
 	if err != nil {
 		return err
 	}
@@ -202,7 +202,7 @@ func RunVolumeDelete(c *CmdConfig) error {
 
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -239,17 +239,17 @@ func RunVolumeSnapshot(c *CmdConfig) error {
 
 	id := c.Args[0]
 
-	name, err := c.Doit.GetString(c.NS, doctl.ArgSnapshotName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgSnapshotName)
 	if err != nil {
 		return err
 	}
 
-	desc, err := c.Doit.GetString(c.NS, doctl.ArgSnapshotDesc)
+	desc, err := c.Config.GetString(c.NS, doctl.ArgSnapshotDesc)
 	if err != nil {
 		return nil
 	}
 
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTag)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTag)
 	if err != nil {
 		return err
 	}

@@ -43,7 +43,7 @@ func TestVolumeActionsAttach(t *testing.T) {
 
 		config.Args = append(config.Args, testVolume.ID)
 		config.Args = append(config.Args, fmt.Sprintf("%d", testDroplet.ID))
-		config.Doit.Set(config.NS, doctl.ArgCommandWait, true)
+		config.Config.Set(config.NS, doctl.ArgCommandWait, true)
 
 		err := RunVolumeAttach(config)
 		assert.NoError(t, err)
@@ -66,7 +66,7 @@ func TestVolumeDetach(t *testing.T) {
 
 		config.Args = append(config.Args, testVolume.ID)
 		config.Args = append(config.Args, fmt.Sprintf("%d", testDroplet.ID))
-		config.Doit.Set(config.NS, doctl.ArgCommandWait, true)
+		config.Config.Set(config.NS, doctl.ArgCommandWait, true)
 
 		err := RunVolumeDetach(config)
 		assert.NoError(t, err)
@@ -78,8 +78,8 @@ func TestVolumeResize(t *testing.T) {
 		tm.volumeActions.EXPECT().Resize(testVolume.ID, 150, "dev0").Return(&testAction, nil)
 		config.Args = append(config.Args, testVolume.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, 150)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, "dev0")
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, 150)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, "dev0")
 
 		err := RunVolumeResize(config)
 		assert.NoError(t, err)
@@ -91,9 +91,9 @@ func TestVolumeResize(t *testing.T) {
 
 		config.Args = append(config.Args, testVolume.ID)
 
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, 150)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, "dev0")
-		config.Doit.Set(config.NS, doctl.ArgCommandWait, true)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, 150)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, "dev0")
+		config.Config.Set(config.NS, doctl.ArgCommandWait, true)
 
 		err := RunVolumeResize(config)
 		assert.NoError(t, err)

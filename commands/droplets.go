@@ -146,65 +146,65 @@ func RunDropletCreate(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
 
-	size, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+	size, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 	if err != nil {
 		return err
 	}
 
-	backups, err := c.Doit.GetBool(c.NS, doctl.ArgBackups)
+	backups, err := c.Config.GetBool(c.NS, doctl.ArgBackups)
 	if err != nil {
 		return err
 	}
 
-	ipv6, err := c.Doit.GetBool(c.NS, doctl.ArgIPv6)
+	ipv6, err := c.Config.GetBool(c.NS, doctl.ArgIPv6)
 	if err != nil {
 		return err
 	}
 
-	privateNetworking, err := c.Doit.GetBool(c.NS, doctl.ArgPrivateNetworking)
+	privateNetworking, err := c.Config.GetBool(c.NS, doctl.ArgPrivateNetworking)
 	if err != nil {
 		return err
 	}
 
-	monitoring, err := c.Doit.GetBool(c.NS, doctl.ArgMonitoring)
+	monitoring, err := c.Config.GetBool(c.NS, doctl.ArgMonitoring)
 	if err != nil {
 		return err
 	}
 
-	keys, err := c.Doit.GetStringSlice(c.NS, doctl.ArgSSHKeys)
+	keys, err := c.Config.GetStringSlice(c.NS, doctl.ArgSSHKeys)
 	if err != nil {
 		return err
 	}
 
-	tagName, err := c.Doit.GetString(c.NS, doctl.ArgTagName)
+	tagName, err := c.Config.GetString(c.NS, doctl.ArgTagName)
 	if err != nil {
 		return err
 	}
 
-	tagNames, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTagNames)
+	tagNames, err := c.Config.GetStringSlice(c.NS, doctl.ArgTagNames)
 	if err != nil {
 		return err
 	}
 
 	sshKeys := extractSSHKeys(keys)
 
-	userData, err := c.Doit.GetString(c.NS, doctl.ArgUserData)
+	userData, err := c.Config.GetString(c.NS, doctl.ArgUserData)
 	if err != nil {
 		return err
 	}
 
-	volumeList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgVolumeList)
+	volumeList, err := c.Config.GetStringSlice(c.NS, doctl.ArgVolumeList)
 	if err != nil {
 		return err
 	}
 	volumes := extractVolumes(volumeList)
 
-	filename, err := c.Doit.GetString(c.NS, doctl.ArgUserDataFile)
+	filename, err := c.Config.GetString(c.NS, doctl.ArgUserDataFile)
 	if err != nil {
 		return err
 	}
@@ -214,7 +214,7 @@ func RunDropletCreate(c *CmdConfig) error {
 		return err
 	}
 
-	imageStr, err := c.Doit.GetString(c.NS, doctl.ArgImage)
+	imageStr, err := c.Config.GetString(c.NS, doctl.ArgImage)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func RunDropletCreate(c *CmdConfig) error {
 		createImage = godo.DropletCreateImage{ID: i}
 	}
 
-	wait, err := c.Doit.GetBool(c.NS, doctl.ArgCommandWait)
+	wait, err := c.Config.GetBool(c.NS, doctl.ArgCommandWait)
 	if err != nil {
 		return err
 	}
@@ -317,7 +317,7 @@ func RunDropletTag(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	tag, err := c.Doit.GetString(c.NS, doctl.ArgTagName)
+	tag, err := c.Config.GetString(c.NS, doctl.ArgTagName)
 	if err != nil {
 		return err
 	}
@@ -349,7 +349,7 @@ func RunDropletUntag(c *CmdConfig) error {
 
 	dropletIDStrs := c.Args
 
-	tagNames, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTagName)
+	tagNames, err := c.Config.GetStringSlice(c.NS, doctl.ArgTagName)
 	if err != nil {
 		return err
 	}
@@ -450,12 +450,12 @@ func allInt(in []string) ([]int, error) {
 func RunDropletDelete(c *CmdConfig) error {
 	ds := c.Droplets()
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
 
-	tagName, err := c.Doit.GetString(c.NS, doctl.ArgTagName)
+	tagName, err := c.Config.GetString(c.NS, doctl.ArgTagName)
 	if err != nil {
 		return err
 	}
@@ -552,7 +552,7 @@ func RunDropletGet(c *CmdConfig) error {
 		return err
 	}
 
-	getTemplate, err := c.Doit.GetString(c.NS, doctl.ArgTemplate)
+	getTemplate, err := c.Config.GetString(c.NS, doctl.ArgTemplate)
 	if err != nil {
 		return err
 	}
@@ -599,12 +599,12 @@ func RunDropletList(c *CmdConfig) error {
 
 	ds := c.Droplets()
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
 
-	tagName, err := c.Doit.GetString(c.NS, doctl.ArgTagName)
+	tagName, err := c.Config.GetString(c.NS, doctl.ArgTagName)
 	if err != nil {
 		return err
 	}

@@ -177,7 +177,7 @@ func RunFirewallDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func RunFirewallAddDroplets(c *CmdConfig) error {
 	}
 	fID := c.Args[0]
 
-	dropletIDsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgDropletIDs)
+	dropletIDsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgDropletIDs)
 	if err != nil {
 		return err
 	}
@@ -223,7 +223,7 @@ func RunFirewallRemoveDroplets(c *CmdConfig) error {
 	}
 	fID := c.Args[0]
 
-	dropletIDsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgDropletIDs)
+	dropletIDsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgDropletIDs)
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func RunFirewallAddTags(c *CmdConfig) error {
 	}
 	fID := c.Args[0]
 
-	tagList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTagNames)
+	tagList, err := c.Config.GetStringSlice(c.NS, doctl.ArgTagNames)
 	if err != nil {
 		return err
 	}
@@ -258,7 +258,7 @@ func RunFirewallRemoveTags(c *CmdConfig) error {
 	}
 	fID := c.Args[0]
 
-	tagList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTagNames)
+	tagList, err := c.Config.GetStringSlice(c.NS, doctl.ArgTagNames)
 	if err != nil {
 		return err
 	}
@@ -297,13 +297,13 @@ func RunFirewallRemoveRules(c *CmdConfig) error {
 }
 
 func buildFirewallRequestFromArgs(c *CmdConfig, r *godo.FirewallRequest) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgFirewallName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgFirewallName)
 	if err != nil {
 		return err
 	}
 	r.Name = name
 
-	ira, err := c.Doit.GetString(c.NS, doctl.ArgInboundRules)
+	ira, err := c.Config.GetString(c.NS, doctl.ArgInboundRules)
 	if err != nil {
 		return err
 	}
@@ -314,7 +314,7 @@ func buildFirewallRequestFromArgs(c *CmdConfig, r *godo.FirewallRequest) error {
 	}
 	r.InboundRules = inboundRules
 
-	ora, err := c.Doit.GetString(c.NS, doctl.ArgOutboundRules)
+	ora, err := c.Config.GetString(c.NS, doctl.ArgOutboundRules)
 	if err != nil {
 		return err
 	}
@@ -325,7 +325,7 @@ func buildFirewallRequestFromArgs(c *CmdConfig, r *godo.FirewallRequest) error {
 	}
 	r.OutboundRules = outboundRules
 
-	dropletIDsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgDropletIDs)
+	dropletIDsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgDropletIDs)
 	if err != nil {
 		return err
 	}
@@ -336,7 +336,7 @@ func buildFirewallRequestFromArgs(c *CmdConfig, r *godo.FirewallRequest) error {
 	}
 	r.DropletIDs = dropletIDs
 
-	tagsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTagNames)
+	tagsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgTagNames)
 	if err != nil {
 		return err
 	}
@@ -346,7 +346,7 @@ func buildFirewallRequestFromArgs(c *CmdConfig, r *godo.FirewallRequest) error {
 }
 
 func buildFirewallRulesRequestFromArgs(c *CmdConfig, rr *godo.FirewallRulesRequest) error {
-	ira, err := c.Doit.GetString(c.NS, doctl.ArgInboundRules)
+	ira, err := c.Config.GetString(c.NS, doctl.ArgInboundRules)
 	if err != nil {
 		return err
 	}
@@ -357,7 +357,7 @@ func buildFirewallRulesRequestFromArgs(c *CmdConfig, rr *godo.FirewallRulesReque
 	}
 	rr.InboundRules = inboundRules
 
-	ora, err := c.Doit.GetString(c.NS, doctl.ArgOutboundRules)
+	ora, err := c.Config.GetString(c.NS, doctl.ArgOutboundRules)
 	if err != nil {
 		return err
 	}

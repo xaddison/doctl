@@ -185,7 +185,7 @@ func RunLoadBalancerDelete(c *CmdConfig) error {
 	}
 	lbID := c.Args[0]
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -209,7 +209,7 @@ func RunLoadBalancerAddDroplets(c *CmdConfig) error {
 	}
 	lbID := c.Args[0]
 
-	dropletIDsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgDropletIDs)
+	dropletIDsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgDropletIDs)
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func RunLoadBalancerRemoveDroplets(c *CmdConfig) error {
 	}
 	lbID := c.Args[0]
 
-	dropletIDsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgDropletIDs)
+	dropletIDsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgDropletIDs)
 	if err != nil {
 		return err
 	}
@@ -249,7 +249,7 @@ func RunLoadBalancerAddForwardingRules(c *CmdConfig) error {
 	}
 	lbID := c.Args[0]
 
-	fra, err := c.Doit.GetString(c.NS, doctl.ArgForwardingRules)
+	fra, err := c.Config.GetString(c.NS, doctl.ArgForwardingRules)
 	if err != nil {
 		return err
 	}
@@ -269,7 +269,7 @@ func RunLoadBalancerRemoveForwardingRules(c *CmdConfig) error {
 	}
 	lbID := c.Args[0]
 
-	fra, err := c.Doit.GetString(c.NS, doctl.ArgForwardingRules)
+	fra, err := c.Config.GetString(c.NS, doctl.ArgForwardingRules)
 	if err != nil {
 		return err
 	}
@@ -347,37 +347,37 @@ func fillStructFromStringSliceArgs(obj interface{}, s string) error {
 }
 
 func buildRequestFromArgs(c *CmdConfig, r *godo.LoadBalancerRequest) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgLoadBalancerName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgLoadBalancerName)
 	if err != nil {
 		return err
 	}
 	r.Name = name
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
 	r.Region = region
 
-	algorithm, err := c.Doit.GetString(c.NS, doctl.ArgLoadBalancerAlgorithm)
+	algorithm, err := c.Config.GetString(c.NS, doctl.ArgLoadBalancerAlgorithm)
 	if err != nil {
 		return err
 	}
 	r.Algorithm = algorithm
 
-	tag, err := c.Doit.GetString(c.NS, doctl.ArgTagName)
+	tag, err := c.Config.GetString(c.NS, doctl.ArgTagName)
 	if err != nil {
 		return err
 	}
 	r.Tag = tag
 
-	redirectHTTPToHTTPS, err := c.Doit.GetBool(c.NS, doctl.ArgRedirectHttpToHttps)
+	redirectHTTPToHTTPS, err := c.Config.GetBool(c.NS, doctl.ArgRedirectHttpToHttps)
 	if err != nil {
 		return err
 	}
 	r.RedirectHttpToHttps = redirectHTTPToHTTPS
 
-	dropletIDsList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgDropletIDs)
+	dropletIDsList, err := c.Config.GetStringSlice(c.NS, doctl.ArgDropletIDs)
 	if err != nil {
 		return err
 	}
@@ -388,7 +388,7 @@ func buildRequestFromArgs(c *CmdConfig, r *godo.LoadBalancerRequest) error {
 	}
 	r.DropletIDs = dropletIDs
 
-	ssa, err := c.Doit.GetString(c.NS, doctl.ArgStickySessions)
+	ssa, err := c.Config.GetString(c.NS, doctl.ArgStickySessions)
 	if err != nil {
 		return err
 	}
@@ -399,7 +399,7 @@ func buildRequestFromArgs(c *CmdConfig, r *godo.LoadBalancerRequest) error {
 	}
 	r.StickySessions = stickySession
 
-	hca, err := c.Doit.GetString(c.NS, doctl.ArgHealthCheck)
+	hca, err := c.Config.GetString(c.NS, doctl.ArgHealthCheck)
 	if err != nil {
 		return err
 	}
@@ -410,7 +410,7 @@ func buildRequestFromArgs(c *CmdConfig, r *godo.LoadBalancerRequest) error {
 	}
 	r.HealthCheck = healthCheck
 
-	fra, err := c.Doit.GetString(c.NS, doctl.ArgForwardingRules)
+	fra, err := c.Config.GetString(c.NS, doctl.ArgForwardingRules)
 	if err != nil {
 		return err
 	}

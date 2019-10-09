@@ -72,7 +72,7 @@ func TestSnapshotListRegion(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.snapshots.EXPECT().List().Return(testSnapshotList, nil)
 
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, "dev0")
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, "dev0")
 
 		err := RunSnapshotList(config)
 		assert.NoError(t, err)
@@ -107,7 +107,7 @@ func TestSnapshotDelete(t *testing.T) {
 		tm.snapshots.EXPECT().Delete(testSnapshot.ID).Return(nil)
 
 		config.Args = append(config.Args, testSnapshot.ID)
-		config.Doit.Set(config.NS, doctl.ArgForce, true)
+		config.Config.Set(config.NS, doctl.ArgForce, true)
 
 		err := RunSnapshotDelete(config)
 		assert.NoError(t, err)

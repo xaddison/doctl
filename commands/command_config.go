@@ -13,7 +13,9 @@ limitations under the License.
 
 package commands
 
-import "github.com/digitalocean/doctl/commands/displayers"
+import (
+	"github.com/digitalocean/doctl/commands/displayers"
+)
 
 // cmdOption allow configuration of a command.
 type cmdOption func(*Command)
@@ -42,4 +44,3 @@ func hiddenCmd() cmdOption {
 		c.Hidden = true
 	}
 }
-

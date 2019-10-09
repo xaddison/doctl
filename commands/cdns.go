@@ -96,7 +96,7 @@ func RunCDNCreate(c *CmdConfig) error {
 
 	origin := c.Args[0]
 
-	ttl, err := c.Doit.GetInt(c.NS, doctl.ArgCDNTTL)
+	ttl, err := c.Config.GetInt(c.NS, doctl.ArgCDNTTL)
 	if err != nil {
 		return err
 	}
@@ -135,8 +135,8 @@ func RunCDNUpdate(c *CmdConfig) error {
 	cs := c.CDNs()
 
 	var item *do.CDN
-	if c.Doit.IsSet(c.NS, doctl.ArgCDNTTL) {
-		ttl, err := c.Doit.GetInt(c.NS, doctl.ArgCDNTTL)
+	if c.Config.IsSet(c.NS, doctl.ArgCDNTTL) {
+		ttl, err := c.Config.GetInt(c.NS, doctl.ArgCDNTTL)
 		if err != nil {
 			return err
 		}
@@ -152,7 +152,7 @@ func RunCDNUpdate(c *CmdConfig) error {
 		}
 	}
 
-	if c.Doit.IsSet(c.NS, doctl.ArgCDNDomain) {
+	if c.Config.IsSet(c.NS, doctl.ArgCDNDomain) {
 		domain, certID, err := getCDNDomainAndCertID(c)
 		if err != nil {
 			return err
@@ -181,13 +181,13 @@ func getCDNDomainAndCertID(c *CmdConfig) (string, string, error) {
 		domain, certID string
 		err            error
 	)
-	domain, err = c.Doit.GetString(c.NS, doctl.ArgCDNDomain)
+	domain, err = c.Config.GetString(c.NS, doctl.ArgCDNDomain)
 	if err != nil {
 		return "", "", err
 	}
 
 	if domain != "" {
-		certID, err = c.Doit.GetString(c.NS, doctl.ArgCDNCertificateID)
+		certID, err = c.Config.GetString(c.NS, doctl.ArgCDNCertificateID)
 		if err != nil {
 			return "", "", err
 		}
@@ -205,7 +205,7 @@ func RunCDNDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func RunCDNFlushCache(c *CmdConfig) error {
 
 	id := c.Args[0]
 
-	files, err := c.Doit.GetStringSlice(c.NS, doctl.ArgCDNFiles)
+	files, err := c.Config.GetStringSlice(c.NS, doctl.ArgCDNFiles)
 	if err != nil {
 		return err
 	}

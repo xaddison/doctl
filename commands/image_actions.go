@@ -61,7 +61,7 @@ func RunImageActionsGet(c *CmdConfig) error {
 		return err
 	}
 
-	actionID, err := c.Doit.GetInt(c.NS, doctl.ArgActionID)
+	actionID, err := c.Config.GetInt(c.NS, doctl.ArgActionID)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func RunImageActionsTransfer(c *CmdConfig) error {
 		return err
 	}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func RunImageActionsTransfer(c *CmdConfig) error {
 		checkErr(fmt.Errorf("could not transfer image: %v", err))
 	}
 
-	wait, err := c.Doit.GetBool(c.NS, doctl.ArgCommandWait)
+	wait, err := c.Config.GetBool(c.NS, doctl.ArgCommandWait)
 	if err != nil {
 		return err
 	}

@@ -13,12 +13,19 @@ limitations under the License.
 
 package commands
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/digitalocean/doctl/config"
+
+	"github.com/spf13/cobra"
+)
 
 // Command is a wrapper around cobra.Command that adds doctl specific
 // functionality.
 type Command struct {
 	*cobra.Command
+
+	// DO NOT USE ME! GOING AWAY ASAP! USE AT DIRE RISK!
+	CmdConfigConfig *config.Config
 
 	fmtCols []string
 

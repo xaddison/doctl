@@ -84,28 +84,28 @@ func (a actionsByCompletedAt) Less(i, j int) bool {
 }
 
 func filterActionList(c *CmdConfig, in do.Actions) (do.Actions, error) {
-	resourceType, err := c.Doit.GetString(c.NS, doctl.ArgActionResourceType)
+	resourceType, err := c.Config.GetString(c.NS, doctl.ArgActionResourceType)
 	if err != nil {
 		return nil, err
 	}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgActionRegion)
+	region, err := c.Config.GetString(c.NS, doctl.ArgActionRegion)
 	if err != nil {
 		return nil, err
 	}
 
-	status, err := c.Doit.GetString(c.NS, doctl.ArgActionStatus)
+	status, err := c.Config.GetString(c.NS, doctl.ArgActionStatus)
 	if err != nil {
 		return nil, err
 	}
 
-	actionType, err := c.Doit.GetString(c.NS, doctl.ArgActionType)
+	actionType, err := c.Config.GetString(c.NS, doctl.ArgActionType)
 	if err != nil {
 		return nil, err
 	}
 
 	var before, after time.Time
-	beforeStr, err := c.Doit.GetString(c.NS, doctl.ArgActionBefore)
+	beforeStr, err := c.Config.GetString(c.NS, doctl.ArgActionBefore)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func filterActionList(c *CmdConfig, in do.Actions) (do.Actions, error) {
 		}
 	}
 
-	afterStr, err := c.Doit.GetString(c.NS, doctl.ArgActionAfter)
+	afterStr, err := c.Config.GetString(c.NS, doctl.ArgActionAfter)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func RunCmdActionWait(c *CmdConfig) error {
 		return err
 	}
 
-	pollTime, err := c.Doit.GetInt(c.NS, doctl.ArgPollTime)
+	pollTime, err := c.Config.GetInt(c.NS, doctl.ArgPollTime)
 	if err != nil {
 		return err
 	}

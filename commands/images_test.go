@@ -97,7 +97,7 @@ func TestImagesUpdate(t *testing.T) {
 		tm.images.EXPECT().Update(testImage.ID, iur).Return(&testImage, nil)
 
 		config.Args = append(config.Args, strconv.Itoa(testImage.ID))
-		config.Doit.Set(config.NS, doctl.ArgImageName, "new-name")
+		config.Config.Set(config.NS, doctl.ArgImageName, "new-name")
 		err := RunImagesUpdate(config)
 		assert.NoError(t, err)
 	})
@@ -108,7 +108,7 @@ func TestImagesDelete(t *testing.T) {
 		tm.images.EXPECT().Delete(testImage.ID).Return(nil)
 
 		config.Args = append(config.Args, strconv.Itoa(testImage.ID))
-		config.Doit.Set(config.NS, doctl.ArgForce, true)
+		config.Config.Set(config.NS, doctl.ArgForce, true)
 
 		err := RunImagesDelete(config)
 		assert.NoError(t, err)
@@ -122,7 +122,7 @@ func TestImagesDeleteMultiple(t *testing.T) {
 		tm.images.EXPECT().Delete(testImageSecondary.ID).Return(nil)
 
 		config.Args = append(config.Args, strconv.Itoa(testImage.ID), strconv.Itoa(testImageSecondary.ID))
-		config.Doit.Set(config.NS, doctl.ArgForce, true)
+		config.Config.Set(config.NS, doctl.ArgForce, true)
 
 		err := RunImagesDelete(config)
 		assert.NoError(t, err)
@@ -142,9 +142,9 @@ func TestImagesCreate(t *testing.T) {
 		tm.images.EXPECT().Create(&r).Return(&testImage, nil)
 
 		config.Args = append(config.Args, "test-image")
-		config.Doit.Set(config.NS, doctl.ArgImageName, "test-image")
-		config.Doit.Set(config.NS, doctl.ArgImageExternalURL, addr)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, "nyc1")
+		config.Config.Set(config.NS, doctl.ArgImageName, "test-image")
+		config.Config.Set(config.NS, doctl.ArgImageExternalURL, addr)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, "nyc1")
 
 		err := RunImagesCreate(config)
 

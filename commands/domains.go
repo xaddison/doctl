@@ -101,7 +101,7 @@ func RunDomainCreate(c *CmdConfig) error {
 
 	ds := c.Domains()
 
-	ipAddress, err := c.Doit.GetString(c.NS, "ip-address")
+	ipAddress, err := c.Config.GetString(c.NS, "ip-address")
 	if err != nil {
 		return err
 	}
@@ -162,7 +162,7 @@ func RunDomainDelete(c *CmdConfig) error {
 	}
 	name := c.Args[0]
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -213,47 +213,47 @@ func RunRecordCreate(c *CmdConfig) error {
 
 	ds := c.Domains()
 
-	rType, err := c.Doit.GetString(c.NS, doctl.ArgRecordType)
+	rType, err := c.Config.GetString(c.NS, doctl.ArgRecordType)
 	if err != nil {
 		return err
 	}
 
-	rName, err := c.Doit.GetString(c.NS, doctl.ArgRecordName)
+	rName, err := c.Config.GetString(c.NS, doctl.ArgRecordName)
 	if err != nil {
 		return err
 	}
 
-	rData, err := c.Doit.GetString(c.NS, doctl.ArgRecordData)
+	rData, err := c.Config.GetString(c.NS, doctl.ArgRecordData)
 	if err != nil {
 		return err
 	}
 
-	rPriority, err := c.Doit.GetInt(c.NS, doctl.ArgRecordPriority)
+	rPriority, err := c.Config.GetInt(c.NS, doctl.ArgRecordPriority)
 	if err != nil {
 		return err
 	}
 
-	rPort, err := c.Doit.GetInt(c.NS, doctl.ArgRecordPort)
+	rPort, err := c.Config.GetInt(c.NS, doctl.ArgRecordPort)
 	if err != nil {
 		return err
 	}
 
-	rTTL, err := c.Doit.GetInt(c.NS, doctl.ArgRecordTTL)
+	rTTL, err := c.Config.GetInt(c.NS, doctl.ArgRecordTTL)
 	if err != nil {
 		return err
 	}
 
-	rWeight, err := c.Doit.GetInt(c.NS, doctl.ArgRecordWeight)
+	rWeight, err := c.Config.GetInt(c.NS, doctl.ArgRecordWeight)
 	if err != nil {
 		return err
 	}
 
-	rFlags, err := c.Doit.GetInt(c.NS, doctl.ArgRecordFlags)
+	rFlags, err := c.Config.GetInt(c.NS, doctl.ArgRecordFlags)
 	if err != nil {
 		return err
 	}
 
-	rTag, err := c.Doit.GetString(c.NS, doctl.ArgRecordTag)
+	rTag, err := c.Config.GetString(c.NS, doctl.ArgRecordTag)
 	if err != nil {
 		return err
 	}
@@ -290,7 +290,7 @@ func RunRecordDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -331,52 +331,52 @@ func RunRecordUpdate(c *CmdConfig) error {
 
 	ds := c.Domains()
 
-	recordID, err := c.Doit.GetInt(c.NS, doctl.ArgRecordID)
+	recordID, err := c.Config.GetInt(c.NS, doctl.ArgRecordID)
 	if err != nil {
 		return err
 	}
 
-	rType, err := c.Doit.GetString(c.NS, doctl.ArgRecordType)
+	rType, err := c.Config.GetString(c.NS, doctl.ArgRecordType)
 	if err != nil {
 		return err
 	}
 
-	rName, err := c.Doit.GetString(c.NS, doctl.ArgRecordName)
+	rName, err := c.Config.GetString(c.NS, doctl.ArgRecordName)
 	if err != nil {
 		return err
 	}
 
-	rData, err := c.Doit.GetString(c.NS, doctl.ArgRecordData)
+	rData, err := c.Config.GetString(c.NS, doctl.ArgRecordData)
 	if err != nil {
 		return err
 	}
 
-	rPriority, err := c.Doit.GetInt(c.NS, doctl.ArgRecordPriority)
+	rPriority, err := c.Config.GetInt(c.NS, doctl.ArgRecordPriority)
 	if err != nil {
 		return err
 	}
 
-	rPort, err := c.Doit.GetInt(c.NS, doctl.ArgRecordPort)
+	rPort, err := c.Config.GetInt(c.NS, doctl.ArgRecordPort)
 	if err != nil {
 		return err
 	}
 
-	rTTL, err := c.Doit.GetInt(c.NS, doctl.ArgRecordTTL)
+	rTTL, err := c.Config.GetInt(c.NS, doctl.ArgRecordTTL)
 	if err != nil {
 		return err
 	}
 
-	rWeight, err := c.Doit.GetInt(c.NS, doctl.ArgRecordWeight)
+	rWeight, err := c.Config.GetInt(c.NS, doctl.ArgRecordWeight)
 	if err != nil {
 		return err
 	}
 
-	rFlags, err := c.Doit.GetInt(c.NS, doctl.ArgRecordFlags)
+	rFlags, err := c.Config.GetInt(c.NS, doctl.ArgRecordFlags)
 	if err != nil {
 		return err
 	}
 
-	rTag, err := c.Doit.GetString(c.NS, doctl.ArgRecordTag)
+	rTag, err := c.Config.GetString(c.NS, doctl.ArgRecordTag)
 	if err != nil {
 		return err
 	}

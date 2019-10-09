@@ -22,9 +22,8 @@ import (
 	"errors"
 
 	"github.com/digitalocean/doctl"
-	"github.com/digitalocean/doctl/config"
 	"github.com/digitalocean/doctl/do"
-	
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -36,7 +35,7 @@ func TestAuthCommand(t *testing.T) {
 
 func TestAuthInit(t *testing.T) {
 	cfw := cfgFileWriter
-	config.RootConfig.Set(doctl.ArgAccessToken, nil)
+	DoitCmd.CmdConfigConfig.V.Set(doctl.ArgAccessToken, nil)
 	defer func() {
 		cfgFileWriter = cfw
 	}()
@@ -57,10 +56,10 @@ func TestAuthInit(t *testing.T) {
 
 func TestAuthInitWithProvidedToken(t *testing.T) {
 	cfw := cfgFileWriter
-	config.RootConfig.Set(doctl.ArgAccessToken, "valid-token")
+	DoitCmd.CmdConfigConfig.V.Set(doctl.ArgAccessToken, "valid-token")
 	defer func() {
 		cfgFileWriter = cfw
-		config.RootConfig.Set(doctl.ArgAccessToken, nil)
+		DoitCmd.CmdConfigConfig.V.Set(doctl.ArgAccessToken, nil)
 	}()
 
 	retrieveUserTokenFunc := func() (string, error) {
@@ -108,7 +107,7 @@ func Test_displayAuthContexts(t *testing.T) {
 			Context: defaultContext,
 			Contexts: map[string]interface{}{
 				defaultContext: true,
-				"test":    true,
+				"test":         true,
 			},
 			Expected: "default (current)\ntest\n",
 		},
@@ -118,7 +117,7 @@ func Test_displayAuthContexts(t *testing.T) {
 			Context: "test",
 			Contexts: map[string]interface{}{
 				defaultContext: true,
-				"test":    true,
+				"test":         true,
 			},
 			Expected: "default\ntest (current)\n",
 		},
@@ -128,7 +127,7 @@ func Test_displayAuthContexts(t *testing.T) {
 			Context: "missing",
 			Contexts: map[string]interface{}{
 				defaultContext: true,
-				"test":    true,
+				"test":         true,
 			},
 			Expected: "default\ntest\n",
 		},

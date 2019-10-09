@@ -32,7 +32,7 @@ func performVolumeAction(c *CmdConfig, fn volumeActionFn) error {
 		return err
 	}
 
-	wait, err := c.Doit.GetBool(c.NS, doctl.ArgCommandWait)
+	wait, err := c.Config.GetBool(c.NS, doctl.ArgCommandWait)
 	if err != nil {
 		return err
 	}
@@ -126,12 +126,12 @@ func RunVolumeResize(c *CmdConfig) error {
 
 		volumeID := c.Args[0]
 
-		size, err := c.Doit.GetInt(c.NS, doctl.ArgSizeSlug)
+		size, err := c.Config.GetInt(c.NS, doctl.ArgSizeSlug)
 		if err != nil {
 			return nil, err
 		}
 
-		region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+		region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 		if err != nil {
 			return nil, err
 		}

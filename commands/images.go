@@ -78,7 +78,7 @@ func Images() *Command {
 func RunImagesList(c *CmdConfig) error {
 	is := c.Images()
 
-	public, err := c.Doit.GetBool(c.NS, doctl.ArgImagePublic)
+	public, err := c.Config.GetBool(c.NS, doctl.ArgImagePublic)
 	if err != nil {
 		return err
 	}
@@ -96,7 +96,7 @@ func RunImagesList(c *CmdConfig) error {
 func RunImagesListDistribution(c *CmdConfig) error {
 	is := c.Images()
 
-	public, err := c.Doit.GetBool(c.NS, doctl.ArgImagePublic)
+	public, err := c.Config.GetBool(c.NS, doctl.ArgImagePublic)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func RunImagesListDistribution(c *CmdConfig) error {
 func RunImagesListApplication(c *CmdConfig) error {
 	is := c.Images()
 
-	public, err := c.Doit.GetBool(c.NS, doctl.ArgImagePublic)
+	public, err := c.Config.GetBool(c.NS, doctl.ArgImagePublic)
 	if err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func RunImagesListApplication(c *CmdConfig) error {
 func RunImagesListUser(c *CmdConfig) error {
 	is := c.Images()
 
-	public, err := c.Doit.GetBool(c.NS, doctl.ArgImagePublic)
+	public, err := c.Config.GetBool(c.NS, doctl.ArgImagePublic)
 	if err != nil {
 		return err
 	}
@@ -191,7 +191,7 @@ func RunImagesUpdate(c *CmdConfig) error {
 		return err
 	}
 
-	name, err := c.Doit.GetString(c.NS, doctl.ArgImageName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgImageName)
 	if err != nil {
 		return err
 	}
@@ -217,7 +217,7 @@ func RunImagesDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -265,23 +265,23 @@ func buildCustomImageRequestFromArgs(c *CmdConfig, r *godo.CustomImageCreateRequ
 	}
 	name := c.Args[0]
 
-	addr, err := c.Doit.GetString(c.NS, doctl.ArgImageExternalURL)
+	addr, err := c.Config.GetString(c.NS, doctl.ArgImageExternalURL)
 	if err != nil {
 		return err
 	}
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
-	distro, err := c.Doit.GetString(c.NS, doctl.ArgImageDistro)
+	distro, err := c.Config.GetString(c.NS, doctl.ArgImageDistro)
 	if err != nil {
 		return err
 	}
-	desc, err := c.Doit.GetString(c.NS, doctl.ArgImageDescription)
+	desc, err := c.Config.GetString(c.NS, doctl.ArgImageDescription)
 	if err != nil {
 		return err
 	}
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTagNames)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTagNames)
 	if err != nil {
 		return err
 	}

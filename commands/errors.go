@@ -18,8 +18,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/digitalocean/doctl/config"
-
 	"github.com/fatih/color"
 	"github.com/shiena/ansicolor"
 )
@@ -52,7 +50,7 @@ func checkErr(err error) {
 		return
 	}
 
-	output := config.RootConfig.GetString("output")
+	output := DoitCmd.CmdConfigConfig.V.GetString("output")
 
 	switch output {
 	default:

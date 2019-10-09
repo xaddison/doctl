@@ -406,15 +406,15 @@ func (s *KubernetesCommandService) RunKubernetesClusterCreate(defaultNodeSize st
 		if err := buildClusterCreateRequestFromArgs(c, r, defaultNodeSize, defaultNodeCount); err != nil {
 			return err
 		}
-		wait, err := c.Doit.GetBool(c.NS, doctl.ArgCommandWait)
+		wait, err := c.Config.GetBool(c.NS, doctl.ArgCommandWait)
 		if err != nil {
 			return err
 		}
-		update, err := c.Doit.GetBool(c.NS, doctl.ArgClusterUpdateKubeconfig)
+		update, err := c.Config.GetBool(c.NS, doctl.ArgClusterUpdateKubeconfig)
 		if err != nil {
 			return err
 		}
-		setCurrentContext, err := c.Doit.GetBool(c.NS, doctl.ArgSetCurrentContext)
+		setCurrentContext, err := c.Config.GetBool(c.NS, doctl.ArgSetCurrentContext)
 		if err != nil {
 			return err
 		}
@@ -448,11 +448,11 @@ func (s *KubernetesCommandService) RunKubernetesClusterUpdate(c *CmdConfig) erro
 	if len(c.Args) == 0 {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
-	update, err := c.Doit.GetBool(c.NS, doctl.ArgClusterUpdateKubeconfig)
+	update, err := c.Config.GetBool(c.NS, doctl.ArgClusterUpdateKubeconfig)
 	if err != nil {
 		return err
 	}
-	setCurrentContext, err := c.Doit.GetBool(c.NS, doctl.ArgSetCurrentContext)
+	setCurrentContext, err := c.Config.GetBool(c.NS, doctl.ArgSetCurrentContext)
 	if err != nil {
 		return err
 	}
@@ -536,7 +536,7 @@ func (s *KubernetesCommandService) RunKubernetesClusterUpgrade(c *CmdConfig) err
 }
 
 func getUpgradeVersionOrLatest(c *CmdConfig, clusterID string) (string, bool, error) {
-	version, err := c.Doit.GetString(c.NS, doctl.ArgClusterVersionSlug)
+	version, err := c.Config.GetString(c.NS, doctl.ArgClusterVersionSlug)
 	if err != nil {
 		return "", false, err
 	}
@@ -608,7 +608,7 @@ func (s *KubernetesCommandService) RunKubernetesClusterDelete(c *CmdConfig) erro
 	if len(c.Args) != 1 {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
-	update, err := c.Doit.GetBool(c.NS, doctl.ArgClusterUpdateKubeconfig)
+	update, err := c.Config.GetBool(c.NS, doctl.ArgClusterUpdateKubeconfig)
 	if err != nil {
 		return err
 	}
@@ -617,7 +617,7 @@ func (s *KubernetesCommandService) RunKubernetesClusterDelete(c *CmdConfig) erro
 		return err
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -738,7 +738,7 @@ func (s *KubernetesCommandService) RunKubernetesKubeconfigExecCredential(c *CmdC
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	version, err := c.Doit.GetString(c.NS, doctl.ArgVersion)
+	version, err := c.Config.GetString(c.NS, doctl.ArgVersion)
 	if err != nil {
 		return err
 	}
@@ -806,7 +806,7 @@ func (s *KubernetesCommandService) RunKubernetesKubeconfigSave(c *CmdConfig) err
 		return err
 	}
 
-	setCurrentContext, err := c.Doit.GetBool(c.NS, doctl.ArgSetCurrentContext)
+	setCurrentContext, err := c.Config.GetBool(c.NS, doctl.ArgSetCurrentContext)
 	if err != nil {
 		return err
 	}
@@ -957,7 +957,7 @@ func (s *KubernetesCommandService) RunKubernetesNodePoolDelete(c *CmdConfig) err
 		return err
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -996,7 +996,7 @@ func kubernetesNodeDelete(replace bool, c *CmdConfig) error {
 	}
 	nodeID := c.Args[2]
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -1010,7 +1010,7 @@ func kubernetesNodeDelete(replace bool, c *CmdConfig) error {
 		return fmt.Errorf("operation aborted")
 	}
 
-	skipDrain, err := c.Doit.GetBool(c.NS, "skip-drain")
+	skipDrain, err := c.Config.GetBool(c.NS, "skip-drain")
 	if err != nil {
 		return err
 	}
@@ -1056,7 +1056,7 @@ func (s *KubernetesCommandService) RunKubeOptionsListNodeSizes(c *CmdConfig) err
 }
 
 func buildClusterCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterCreateRequest, defaultNodeSize string, defaultNodeCount int) error {
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
@@ -1068,13 +1068,13 @@ func buildClusterCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterCr
 	}
 	r.VersionSlug = version
 
-	autoUpgrade, err := c.Doit.GetBool(c.NS, doctl.ArgAutoUpgrade)
+	autoUpgrade, err := c.Config.GetBool(c.NS, doctl.ArgAutoUpgrade)
 	if err != nil {
 		return err
 	}
 	r.AutoUpgrade = autoUpgrade
 
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTag)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTag)
 	if err != nil {
 		return err
 	}
@@ -1087,18 +1087,18 @@ func buildClusterCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterCr
 	r.MaintenancePolicy = maintenancePolicy
 
 	// node pools
-	nodePoolSpecs, err := c.Doit.GetStringSlice(c.NS, doctl.ArgClusterNodePool)
+	nodePoolSpecs, err := c.Config.GetStringSlice(c.NS, doctl.ArgClusterNodePool)
 	if err != nil {
 		return err
 	}
 
 	if len(nodePoolSpecs) == 0 {
-		nodePoolSize, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+		nodePoolSize, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 		if err != nil {
 			return err
 		}
 
-		nodePoolCount, err := c.Doit.GetInt(c.NS, doctl.ArgNodePoolCount)
+		nodePoolCount, err := c.Config.GetInt(c.NS, doctl.ArgNodePoolCount)
 		if err != nil {
 			return err
 		}
@@ -1114,7 +1114,7 @@ func buildClusterCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterCr
 	}
 
 	// multiple node pools
-	if c.Doit.IsSet(c.NS, doctl.ArgSizeSlug) || c.Doit.IsSet(c.NS, doctl.ArgNodePoolCount) {
+	if c.Config.IsSet(c.NS, doctl.ArgSizeSlug) || c.Config.IsSet(c.NS, doctl.ArgNodePoolCount) {
 		return fmt.Errorf("flags %q and %q cannot be provided when %q is present", doctl.ArgSizeSlug, doctl.ArgNodePoolCount, doctl.ArgClusterNodePool)
 	}
 
@@ -1128,13 +1128,13 @@ func buildClusterCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterCr
 }
 
 func buildClusterUpdateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterUpdateRequest) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgClusterName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgClusterName)
 	if err != nil {
 		return err
 	}
 	r.Name = name
 
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTag)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTag)
 	if err != nil {
 		return err
 	}
@@ -1146,7 +1146,7 @@ func buildClusterUpdateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterUp
 	}
 	r.MaintenancePolicy = maintenancePolicy
 
-	autoUpgrade, err := c.Doit.GetBoolPtr(c.NS, doctl.ArgAutoUpgrade)
+	autoUpgrade, err := c.Config.GetBoolPtr(c.NS, doctl.ArgAutoUpgrade)
 	if err != nil {
 		return err
 	}
@@ -1156,7 +1156,7 @@ func buildClusterUpdateRequestFromArgs(c *CmdConfig, r *godo.KubernetesClusterUp
 }
 
 func buildNodePoolRecycleRequestFromArgs(c *CmdConfig, clusterID, poolID string, r *godo.KubernetesNodePoolRecycleNodesRequest) error {
-	nodeIDorNames, err := c.Doit.GetStringSlice(c.NS, doctl.ArgNodePoolNodeIDs)
+	nodeIDorNames, err := c.Config.GetStringSlice(c.NS, doctl.ArgNodePoolNodeIDs)
 	if err != nil {
 		return err
 	}
@@ -1250,19 +1250,19 @@ func parseNodePoolString(nodePool, defaultName, defaultSize string, defaultCount
 }
 
 func buildNodePoolCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesNodePoolCreateRequest) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgNodePoolName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgNodePoolName)
 	if err != nil {
 		return err
 	}
 	r.Name = name
 
-	size, err := c.Doit.GetString(c.NS, doctl.ArgSizeSlug)
+	size, err := c.Config.GetString(c.NS, doctl.ArgSizeSlug)
 	if err != nil {
 		return err
 	}
 	r.Size = size
 
-	count, err := c.Doit.GetIntPtr(c.NS, doctl.ArgNodePoolCount)
+	count, err := c.Config.GetIntPtr(c.NS, doctl.ArgNodePoolCount)
 	if err != nil {
 		return err
 	}
@@ -1271,25 +1271,25 @@ func buildNodePoolCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesNodePool
 	}
 	r.Count = *count
 
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTag)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTag)
 	if err != nil {
 		return err
 	}
 	r.Tags = tags
 
-	autoScale, err := c.Doit.GetBool(c.NS, doctl.ArgNodePoolAutoScale)
+	autoScale, err := c.Config.GetBool(c.NS, doctl.ArgNodePoolAutoScale)
 	if err != nil {
 		return err
 	}
 	r.AutoScale = autoScale
 
-	minNodes, err := c.Doit.GetInt(c.NS, doctl.ArgNodePoolMinNodes)
+	minNodes, err := c.Config.GetInt(c.NS, doctl.ArgNodePoolMinNodes)
 	if err != nil {
 		return err
 	}
 	r.MinNodes = minNodes
 
-	maxNodes, err := c.Doit.GetInt(c.NS, doctl.ArgNodePoolMaxNodes)
+	maxNodes, err := c.Config.GetInt(c.NS, doctl.ArgNodePoolMaxNodes)
 	if err != nil {
 		return err
 	}
@@ -1299,37 +1299,37 @@ func buildNodePoolCreateRequestFromArgs(c *CmdConfig, r *godo.KubernetesNodePool
 }
 
 func buildNodePoolUpdateRequestFromArgs(c *CmdConfig, r *godo.KubernetesNodePoolUpdateRequest) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgNodePoolName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgNodePoolName)
 	if err != nil {
 		return err
 	}
 	r.Name = name
 
-	count, err := c.Doit.GetIntPtr(c.NS, doctl.ArgNodePoolCount)
+	count, err := c.Config.GetIntPtr(c.NS, doctl.ArgNodePoolCount)
 	if err != nil {
 		return err
 	}
 	r.Count = count
 
-	tags, err := c.Doit.GetStringSlice(c.NS, doctl.ArgTag)
+	tags, err := c.Config.GetStringSlice(c.NS, doctl.ArgTag)
 	if err != nil {
 		return err
 	}
 	r.Tags = tags
 
-	autoScale, err := c.Doit.GetBoolPtr(c.NS, doctl.ArgNodePoolAutoScale)
+	autoScale, err := c.Config.GetBoolPtr(c.NS, doctl.ArgNodePoolAutoScale)
 	if err != nil {
 		return err
 	}
 	r.AutoScale = autoScale
 
-	minNodes, err := c.Doit.GetIntPtr(c.NS, doctl.ArgNodePoolMinNodes)
+	minNodes, err := c.Config.GetIntPtr(c.NS, doctl.ArgNodePoolMinNodes)
 	if err != nil {
 		return err
 	}
 	r.MinNodes = minNodes
 
-	maxNodes, err := c.Doit.GetIntPtr(c.NS, doctl.ArgNodePoolMaxNodes)
+	maxNodes, err := c.Config.GetIntPtr(c.NS, doctl.ArgNodePoolMaxNodes)
 	if err != nil {
 		return err
 	}
@@ -1666,7 +1666,7 @@ func looksLikeUUID(str string) bool {
 }
 
 func getVersionOrLatest(c *CmdConfig) (string, error) {
-	version, err := c.Doit.GetString(c.NS, doctl.ArgClusterVersionSlug)
+	version, err := c.Config.GetString(c.NS, doctl.ArgClusterVersionSlug)
 	if err != nil {
 		return "", err
 	}
@@ -1694,7 +1694,7 @@ func getVersionOrLatest(c *CmdConfig) (string, error) {
 }
 
 func parseMaintenancePolicy(c *CmdConfig) (*godo.KubernetesMaintenancePolicy, error) {
-	maintenanceWindow, err := c.Doit.GetString(c.NS, doctl.ArgMaintenanceWindow)
+	maintenanceWindow, err := c.Config.GetString(c.NS, doctl.ArgMaintenanceWindow)
 	if err != nil {
 		return nil, err
 	}

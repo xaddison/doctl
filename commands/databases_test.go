@@ -264,12 +264,12 @@ func TestDatabasesCreate(t *testing.T) {
 		tm.databases.EXPECT().Create(r).Return(&testDBCluster, nil)
 
 		config.Args = append(config.Args, testDBCluster.Name)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, testDBCluster.RegionSlug)
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
-		config.Doit.Set(config.NS, doctl.ArgVersion, testDBCluster.VersionSlug)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseEngine, testDBCluster.EngineSlug)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseNumNodes, testDBCluster.NumNodes)
-		config.Doit.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, testDBCluster.RegionSlug)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
+		config.Config.Set(config.NS, doctl.ArgVersion, testDBCluster.VersionSlug)
+		config.Config.Set(config.NS, doctl.ArgDatabaseEngine, testDBCluster.EngineSlug)
+		config.Config.Set(config.NS, doctl.ArgDatabaseNumNodes, testDBCluster.NumNodes)
+		config.Config.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
 
 		err := RunDatabaseCreate(config)
 		assert.NoError(t, err)
@@ -293,7 +293,7 @@ func TestDatabasesDelete(t *testing.T) {
 		tm.databases.EXPECT().Delete(testDBCluster.ID).Return(nil)
 
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseDelete(config)
 		assert.NoError(t, err)
@@ -304,7 +304,7 @@ func TestDatabasesDelete(t *testing.T) {
 		tm.databases.EXPECT().Delete(testDBCluster.ID).Return(errTest)
 
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseDelete(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -321,8 +321,8 @@ func TestDatabaseMigrate(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.databases.EXPECT().Migrate(testDBCluster.ID, r).Return(nil)
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, testDBCluster.RegionSlug)
-		config.Doit.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, testDBCluster.RegionSlug)
+		config.Config.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
 
 		err := RunDatabaseMigrate(config)
 		assert.NoError(t, err)
@@ -332,8 +332,8 @@ func TestDatabaseMigrate(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.databases.EXPECT().Migrate(testDBCluster.ID, r).Return(errTest)
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, testDBCluster.RegionSlug)
-		config.Doit.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, testDBCluster.RegionSlug)
+		config.Config.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
 
 		err := RunDatabaseMigrate(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -350,8 +350,8 @@ func TestDatabaseResize(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.databases.EXPECT().Resize(testDBCluster.ID, r).Return(nil)
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseNumNodes, testDBCluster.NumNodes)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
+		config.Config.Set(config.NS, doctl.ArgDatabaseNumNodes, testDBCluster.NumNodes)
 
 		err := RunDatabaseResize(config)
 		assert.NoError(t, err)
@@ -361,8 +361,8 @@ func TestDatabaseResize(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.databases.EXPECT().Resize(testDBCluster.ID, r).Return(errTest)
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseNumNodes, testDBCluster.NumNodes)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
+		config.Config.Set(config.NS, doctl.ArgDatabaseNumNodes, testDBCluster.NumNodes)
 
 		err := RunDatabaseResize(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -439,8 +439,8 @@ func TestDatabaseUpdateMaintenance(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.databases.EXPECT().UpdateMaintenance(testDBCluster.ID, r).Return(nil)
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseMaintenanceDay, testDBMainWindow.Day)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseMaintenanceHour, testDBMainWindow.Hour)
+		config.Config.Set(config.NS, doctl.ArgDatabaseMaintenanceDay, testDBMainWindow.Day)
+		config.Config.Set(config.NS, doctl.ArgDatabaseMaintenanceHour, testDBMainWindow.Hour)
 
 		err := RunDatabaseMaintenanceUpdate(config)
 		assert.NoError(t, err)
@@ -450,8 +450,8 @@ func TestDatabaseUpdateMaintenance(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		tm.databases.EXPECT().UpdateMaintenance(testDBCluster.ID, r).Return(errTest)
 		config.Args = append(config.Args, testDBCluster.ID)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseMaintenanceDay, testDBMainWindow.Day)
-		config.Doit.Set(config.NS, doctl.ArgDatabaseMaintenanceHour, testDBMainWindow.Hour)
+		config.Config.Set(config.NS, doctl.ArgDatabaseMaintenanceDay, testDBMainWindow.Day)
+		config.Config.Set(config.NS, doctl.ArgDatabaseMaintenanceHour, testDBMainWindow.Hour)
 
 		err := RunDatabaseMaintenanceUpdate(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -536,7 +536,7 @@ func TestDatabasesUserDelete(t *testing.T) {
 		tm.databases.EXPECT().DeleteUser(testDBCluster.ID, testDBUser.Name).Return(nil)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBUser.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseUserDelete(config)
 		assert.NoError(t, err)
@@ -547,7 +547,7 @@ func TestDatabasesUserDelete(t *testing.T) {
 		tm.databases.EXPECT().DeleteUser(testDBCluster.ID, testDBUser.Name).Return(errTest)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBUser.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseUserDelete(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -615,10 +615,10 @@ func TestDatabasePoolCreate(t *testing.T) {
 		tm.databases.EXPECT().CreatePool(testDBCluster.ID, r).Return(&testDBPool, nil)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBPool.Name)
-		config.Doit.Set(config.NS, doctl.ArgDatabasePoolDBName, testDB.Name)
-		config.Doit.Set(config.NS, doctl.ArgDatabasePoolMode, testDBPool.Mode)
-		config.Doit.Set(config.NS, doctl.ArgDatabasePoolSize, testDBPool.Size)
-		config.Doit.Set(config.NS, doctl.ArgDatabasePoolUserName, testDBUser.Name)
+		config.Config.Set(config.NS, doctl.ArgDatabasePoolDBName, testDB.Name)
+		config.Config.Set(config.NS, doctl.ArgDatabasePoolMode, testDBPool.Mode)
+		config.Config.Set(config.NS, doctl.ArgDatabasePoolSize, testDBPool.Size)
+		config.Config.Set(config.NS, doctl.ArgDatabasePoolUserName, testDBUser.Name)
 
 		err := RunDatabasePoolCreate(config)
 		assert.NoError(t, err)
@@ -643,7 +643,7 @@ func TestDatabasesPoolDelete(t *testing.T) {
 		tm.databases.EXPECT().DeletePool(testDBCluster.ID, testDBPool.Name).Return(nil)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBPool.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabasePoolDelete(config)
 		assert.NoError(t, err)
@@ -654,7 +654,7 @@ func TestDatabasesPoolDelete(t *testing.T) {
 		tm.databases.EXPECT().DeletePool(testDBCluster.ID, testDBPool.Name).Return(errTest)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBPool.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabasePoolDelete(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -739,7 +739,7 @@ func TestDatabasesDBDelete(t *testing.T) {
 		tm.databases.EXPECT().DeleteDB(testDBCluster.ID, testDB.Name).Return(nil)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDB.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseDBDelete(config)
 		assert.NoError(t, err)
@@ -750,7 +750,7 @@ func TestDatabasesDBDelete(t *testing.T) {
 		tm.databases.EXPECT().DeleteDB(testDBCluster.ID, testDB.Name).Return(errTest)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDB.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseDBDelete(config)
 		assert.EqualError(t, err, errTest.Error())
@@ -814,9 +814,9 @@ func TestDatabaseReplicaCreate(t *testing.T) {
 		tm.databases.EXPECT().CreateReplica(testDBCluster.ID, r).Return(&testDBReplica, nil)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBReplica.Name)
-		config.Doit.Set(config.NS, doctl.ArgRegionSlug, testDBReplica.Region)
-		config.Doit.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
-		config.Doit.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
+		config.Config.Set(config.NS, doctl.ArgRegionSlug, testDBReplica.Region)
+		config.Config.Set(config.NS, doctl.ArgSizeSlug, testDBCluster.SizeSlug)
+		config.Config.Set(config.NS, doctl.ArgPrivateNetworkUUID, testDBCluster.PrivateNetworkUUID)
 
 		err := RunDatabaseReplicaCreate(config)
 		assert.NoError(t, err)
@@ -841,7 +841,7 @@ func TestDatabasesReplicaDelete(t *testing.T) {
 		tm.databases.EXPECT().DeleteReplica(testDBCluster.ID, testDBReplica.Name).Return(nil)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBReplica.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseReplicaDelete(config)
 		assert.NoError(t, err)
@@ -852,7 +852,7 @@ func TestDatabasesReplicaDelete(t *testing.T) {
 		tm.databases.EXPECT().DeleteReplica(testDBCluster.ID, testDBReplica.Name).Return(errTest)
 
 		config.Args = append(config.Args, testDBCluster.ID, testDBReplica.Name)
-		config.Doit.Set(config.NS, doctl.ArgForce, "true")
+		config.Config.Set(config.NS, doctl.ArgForce, "true")
 
 		err := RunDatabaseReplicaDelete(config)
 		assert.EqualError(t, err, errTest.Error())

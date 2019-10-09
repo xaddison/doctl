@@ -14,6 +14,7 @@ limitations under the License.
 package ssh
 
 import (
+	"github.com/digitalocean/doctl"
 	"github.com/digitalocean/doctl/pkg/runner"
 	"os"
 	"os/exec"
@@ -34,6 +35,18 @@ type Runner struct {
 }
 
 var _ runner.Runner = &Runner{}
+
+// SSH creates a ssh connection to a host.
+func SSH(user, host, keyPath string, port int, opts Options) *Runner {
+	return &Runner{
+		User:            user,
+		Host:            host,
+		KeyPath:         keyPath,
+		Port:            port,
+		AgentForwarding: opts[doctl.ArgsSSHAgentForwarding].(bool),
+		Command:         opts[doctl.ArgSSHCommand].(string),
+	}
+}
 
 // Run ssh.
 func (r *Runner) Run() error {

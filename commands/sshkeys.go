@@ -103,7 +103,7 @@ func RunKeyCreate(c *CmdConfig) error {
 
 	name := c.Args[0]
 
-	publicKey, err := c.Doit.GetString(c.NS, doctl.ArgKeyPublicKey)
+	publicKey, err := c.Config.GetString(c.NS, doctl.ArgKeyPublicKey)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func RunKeyImport(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	keyPath, err := c.Doit.GetString(c.NS, doctl.ArgKeyPublicKeyFile)
+	keyPath, err := c.Config.GetString(c.NS, doctl.ArgKeyPublicKeyFile)
 	if err != nil {
 		return err
 	}
@@ -173,7 +173,7 @@ func RunKeyDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return nil
 	}
@@ -196,7 +196,7 @@ func RunKeyUpdate(c *CmdConfig) error {
 
 	rawKey := c.Args[0]
 
-	name, err := c.Doit.GetString(c.NS, doctl.ArgKeyName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgKeyName)
 	if err != nil {
 		return err
 	}

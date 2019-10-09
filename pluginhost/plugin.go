@@ -20,8 +20,6 @@ import (
 	"net/rpc/jsonrpc"
 	"os"
 
-	"github.com/digitalocean/doctl"
-	"github.com/digitalocean/doctl/config"
 	"github.com/natefinch/pie"
 )
 
@@ -45,7 +43,8 @@ func NewHost(pluginPath string) (*Host, error) {
 // Call a method on the plugin.
 func (h *Host) Call(method string, args ...string) (string, error) {
 	opts := &CallOptions{
-		AccessToken: config.RootConfig.GetString(doctl.ArgAccessToken),
+		//		AccessToken: config.RootConfig.GetString(doctl.ArgAccessToken),
+		AccessToken: "TODO: fix",
 		Args:        args,
 	}
 
@@ -60,9 +59,7 @@ func (h *Host) Call(method string, args ...string) (string, error) {
 }
 
 func debug(msg string) {
-	//if config.RootConfig.GetBool("verbose") {
 	log.Println(msg)
-	//}
 }
 
 // CallOptions are options to a plugin call. This is exported so go based plugins

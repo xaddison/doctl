@@ -54,12 +54,12 @@ func RunSnapshotList(c *CmdConfig) error {
 	var err error
 	ss := c.Snapshots()
 
-	restype, err := c.Doit.GetString(c.NS, doctl.ArgResourceType)
+	restype, err := c.Config.GetString(c.NS, doctl.ArgResourceType)
 	if err != nil {
 		return err
 	}
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func RunSnapshotDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}

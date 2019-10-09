@@ -15,22 +15,15 @@ package doctl
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/blang/semver"
-	"github.com/digitalocean/doctl/config"
-	"github.com/digitalocean/doctl/pkg/runner"
-	"github.com/digitalocean/doctl/pkg/ssh"
-	"github.com/digitalocean/godo"
-	"golang.org/x/oauth2"
 )
 
 const (
@@ -146,175 +139,6 @@ func (glv *GithubLatestVersioner) LatestVersion() (string, error) {
 
 	tagName := tn.(string)
 	return strings.TrimPrefix(tagName, "v"), nil
-}
-
-// Config is an interface that represent doit's config.
-type Config interface {
-	GetGodoClient(trace bool, accessToken string) (*godo.Client, error)
-	SSH(user, host, keyPath string, port int, opts ssh.Options) runner.Runner
-	Set(ns, key string, val interface{})
-	IsSet(ns, key string) bool
-	GetString(ns, key string) (string, error)
-	GetBool(ns, key string) (bool, error)
-	GetBoolPtr(ns, key string) (*bool, error)
-	GetInt(ns, key string) (int, error)
-	GetIntPtr(ns, key string) (*int, error)
-	GetStringSlice(ns, key string) ([]string, error)
-}
-
-// LiveConfig is an implementation of Config for live values.
-type LiveConfig struct {}
-
-var _ Config = &LiveConfig{}
-
-// GetGodoClient returns a GodoClient.
-func (c *LiveConfig) GetGodoClient(trace bool, accessToken string) (*godo.Client, error) {
-	if accessToken == "" {
-		return nil, fmt.Errorf("access token is required. (hint: run 'doctl auth init')")
-	}
-
-	tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: accessToken})
-	oauthClient := oauth2.NewClient(context.Background(), tokenSource)
-
-	if trace {
-		r := newRecorder(oauthClient.Transport)
-
-		go func() {
-			for {
-				select {
-				case msg := <-r.req:
-					log.Println("->", strconv.Quote(msg))
-				case msg := <-r.resp:
-					log.Println("<-", strconv.Quote(msg))
-				}
-			}
-		}()
-
-		oauthClient.Transport = r
-	}
-
-	args := []godo.ClientOpt{godo.SetUserAgent(userAgent())}
-
-	apiURL := config.RootConfig.GetString("api-url")
-	if apiURL != "" {
-		args = append(args, godo.SetBaseURL(apiURL))
-	}
-
-	return godo.New(oauthClient, args...)
-}
-
-func userAgent() string {
-	return "doctl/" + DoitVersion.String()
-}
-
-// SSH creates a ssh connection to a host.
-func (c *LiveConfig) SSH(user, host, keyPath string, port int, opts ssh.Options) runner.Runner {
-	return &ssh.Runner{
-		User:            user,
-		Host:            host,
-		KeyPath:         keyPath,
-		Port:            port,
-		AgentForwarding: opts[ArgsSSHAgentForwarding].(bool),
-		Command:         opts[ArgSSHCommand].(string),
-	}
-}
-
-// Set sets a config key.
-func (c *LiveConfig) Set(ns, key string, val interface{}) {
-	config.RootConfig.Set(NsKey(ns, key), val)
-}
-
-// IsSet checks whether flag is set.
-func (c *LiveConfig) IsSet(ns, key string) bool {
-	return config.RootConfig.IsSet(NsKey(ns, key))
-}
-
-// GetString returns a config value as a string.
-func (c *LiveConfig) GetString(ns, key string) (string, error) {
-	nskey := NsKey(ns, key)
-	str := config.RootConfig.GetString(nskey)
-
-	if isRequired(nskey) && strings.TrimSpace(str) == "" {
-		return "", NewMissingArgsErr(nskey)
-	}
-	return str, nil
-}
-
-// GetBool returns a config value as a bool.
-func (c *LiveConfig) GetBool(ns, key string) (bool, error) {
-	return config.RootConfig.GetBool(NsKey(ns, key)), nil
-}
-
-// GetBoolPtr returns a config value as a bool pointer.
-func (c *LiveConfig) GetBoolPtr(ns, key string) (*bool, error) {
-	if !c.IsSet(ns, key) {
-		return nil, nil
-	}
-	val := config.RootConfig.GetBool(NsKey(ns, key))
-	return &val, nil
-}
-
-// GetInt returns a config value as an int.
-func (c *LiveConfig) GetInt(ns, key string) (int, error) {
-	nskey := NsKey(ns, key)
-	val := config.RootConfig.GetInt(nskey)
-
-	if isRequired(nskey) && val == 0 {
-		return 0, NewMissingArgsErr(nskey)
-	}
-	return val, nil
-}
-
-// GetIntPtr returns a config value as an int pointer.
-func (c *LiveConfig) GetIntPtr(ns, key string) (*int, error) {
-	nskey := NsKey(ns, key)
-
-	if !c.IsSet(ns, key) {
-		if isRequired(nskey) {
-			return nil, NewMissingArgsErr(nskey)
-		}
-		return nil, nil
-	}
-	val := config.RootConfig.GetInt(nskey)
-	return &val, nil
-}
-
-// GetStringSlice returns a config value as a string slice.
-func (c *LiveConfig) GetStringSlice(ns, key string) ([]string, error) {
-	nskey := NsKey(ns, key)
-	val := config.RootConfig.GetStringSlice(nskey)
-
-	if isRequired(nskey) && emptyStringSlice(val) {
-		return nil, NewMissingArgsErr(nskey)
-	}
-
-	out := []string{}
-	for _, item := range config.RootConfig.GetStringSlice(nskey) {
-		item = strings.TrimPrefix(item, "[")
-		item = strings.TrimSuffix(item, "]")
-
-		list := strings.Split(item, ",")
-		for _, str := range list {
-			if str == "" {
-				continue
-			}
-			out = append(out, str)
-		}
-	}
-	return out, nil
-}
-
-func NsKey(ns, key string) string {
-	return fmt.Sprintf("%s.%s", ns, key)
-}
-
-func isRequired(key string) bool {
-	return config.RootConfig.GetBool(fmt.Sprintf("required.%s", key))
-}
-
-// This is needed because an empty StringSlice flag returns `["[]"]`
-func emptyStringSlice(s []string) bool {
-	return len(s) == 1 && s[0] == "[]"
 }
 
 // CommandName returns the name by which doctl was invoked

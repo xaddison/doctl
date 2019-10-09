@@ -83,17 +83,17 @@ func RunCertificateGet(c *CmdConfig) error {
 
 // RunCertificateCreate creates a certificate.
 func RunCertificateCreate(c *CmdConfig) error {
-	name, err := c.Doit.GetString(c.NS, doctl.ArgCertificateName)
+	name, err := c.Config.GetString(c.NS, doctl.ArgCertificateName)
 	if err != nil {
 		return err
 	}
 
-	domainList, err := c.Doit.GetStringSlice(c.NS, doctl.ArgCertificateDNSNames)
+	domainList, err := c.Config.GetStringSlice(c.NS, doctl.ArgCertificateDNSNames)
 	if err != nil {
 		return err
 	}
 
-	cType, err := c.Doit.GetString(c.NS, doctl.ArgCertificateType)
+	cType, err := c.Config.GetString(c.NS, doctl.ArgCertificateType)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func RunCertificateCreate(c *CmdConfig) error {
 		Type:     cType,
 	}
 
-	pkPath, err := c.Doit.GetString(c.NS, doctl.ArgPrivateKeyPath)
+	pkPath, err := c.Config.GetString(c.NS, doctl.ArgPrivateKeyPath)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func RunCertificateCreate(c *CmdConfig) error {
 		r.PrivateKey = pc
 	}
 
-	lcPath, err := c.Doit.GetString(c.NS, doctl.ArgLeafCertificatePath)
+	lcPath, err := c.Config.GetString(c.NS, doctl.ArgLeafCertificatePath)
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func RunCertificateCreate(c *CmdConfig) error {
 		r.LeafCertificate = lc
 	}
 
-	ccPath, err := c.Doit.GetString(c.NS, doctl.ArgCertificateChainPath)
+	ccPath, err := c.Config.GetString(c.NS, doctl.ArgCertificateChainPath)
 	if err != nil {
 		return err
 	}
@@ -175,7 +175,7 @@ func RunCertificateDelete(c *CmdConfig) error {
 	}
 	cID := c.Args[0]
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}

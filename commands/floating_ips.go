@@ -62,8 +62,8 @@ func RunFloatingIPCreate(c *CmdConfig) error {
 	fis := c.FloatingIPs()
 
 	// ignore errors since we don't know which one is valid
-	region, _ := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
-	dropletID, _ := c.Doit.GetInt(c.NS, doctl.ArgDropletID)
+	region, _ := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
+	dropletID, _ := c.Config.GetInt(c.NS, doctl.ArgDropletID)
 
 	if region == "" && dropletID == 0 {
 		return doctl.NewMissingArgsErr("region and droplet id can't both be blank")
@@ -119,7 +119,7 @@ func RunFloatingIPDelete(c *CmdConfig) error {
 		return doctl.NewMissingArgsErr(c.NS)
 	}
 
-	force, err := c.Doit.GetBool(c.NS, doctl.ArgForce)
+	force, err := c.Config.GetBool(c.NS, doctl.ArgForce)
 	if err != nil {
 		return err
 	}
@@ -136,7 +136,7 @@ func RunFloatingIPDelete(c *CmdConfig) error {
 func RunFloatingIPList(c *CmdConfig) error {
 	fis := c.FloatingIPs()
 
-	region, err := c.Doit.GetString(c.NS, doctl.ArgRegionSlug)
+	region, err := c.Config.GetString(c.NS, doctl.ArgRegionSlug)
 	if err != nil {
 		return err
 	}

@@ -26,6 +26,8 @@ import (
 	"github.com/digitalocean/doctl/commands/displayers"
 	"github.com/digitalocean/doctl/config"
 	"github.com/digitalocean/doctl/do"
+	"github.com/digitalocean/doctl/pkg/ssh"
+
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
@@ -43,6 +45,7 @@ var (
 			Use:   "doctl",
 			Short: "doctl is a command line interface for the DigitalOcean API.",
 		},
+		CmdConfigConfig: config.NewConfig(),
 	}
 
 	//Writer wires up stdout for all commands to write to
@@ -72,16 +75,16 @@ func init() {
 	rootPFlagSet := DoitCmd.PersistentFlags()
 	rootPFlagSet.StringVarP(&cfgFile, "config", "c",
 		filepath.Join(configHome(), defaultConfigName), "config file")
-	config.RootConfig.BindPFlag("config", rootPFlagSet.Lookup("config"))
+	DoitCmd.CmdConfigConfig.V.BindPFlag("config", rootPFlagSet.Lookup("config"))
 
 	rootPFlagSet.StringVarP(&APIURL, "api-url", "u", "", "Override default API V2 endpoint")
-	config.RootConfig.BindPFlag("api-url", rootPFlagSet.Lookup("api-url"))
+	DoitCmd.CmdConfigConfig.V.BindPFlag("api-url", rootPFlagSet.Lookup("api-url"))
 
 	rootPFlagSet.StringVarP(&Token, doctl.ArgAccessToken, "t", "", "API V2 Access Token")
-	config.RootConfig.BindPFlag(doctl.ArgAccessToken, rootPFlagSet.Lookup("access-token"))
+	DoitCmd.CmdConfigConfig.V.BindPFlag(doctl.ArgAccessToken, rootPFlagSet.Lookup("access-token"))
 
 	rootPFlagSet.StringVarP(&Output, "output", "o", "text", "output format [text|json]")
-	config.RootConfig.BindPFlag("output", rootPFlagSet.Lookup("output"))
+	DoitCmd.CmdConfigConfig.V.BindPFlag("output", rootPFlagSet.Lookup("output"))
 
 	rootPFlagSet.StringVarP(&Context, doctl.ArgContext, "", defaultContext, "authentication context")
 	rootPFlagSet.BoolVarP(&Trace, "trace", "", false, "trace api access")
@@ -93,19 +96,19 @@ func init() {
 }
 
 func initConfig() {
-	config.RootConfig.SetEnvPrefix("DIGITALOCEAN")
-	config.RootConfig.AutomaticEnv()
-	config.RootConfig.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	config.RootConfig.SetConfigType("yaml")
+	DoitCmd.CmdConfigConfig.V.SetEnvPrefix("DIGITALOCEAN")
+	DoitCmd.CmdConfigConfig.V.AutomaticEnv()
+	DoitCmd.CmdConfigConfig.V.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	DoitCmd.CmdConfigConfig.V.SetConfigType("yaml")
 
-	cfgFile := config.RootConfig.GetString("config")
-	config.RootConfig.SetConfigFile(cfgFile)
+	cfgFile := DoitCmd.CmdConfigConfig.V.GetString("config")
+	DoitCmd.CmdConfigConfig.V.SetConfigFile(cfgFile)
 
-	config.RootConfig.SetDefault("output", "text")
-	config.RootConfig.SetDefault("context", defaultContext)
+	DoitCmd.CmdConfigConfig.V.SetDefault("output", "text")
+	DoitCmd.CmdConfigConfig.V.SetDefault("context", defaultContext)
 
 	if _, err := os.Stat(cfgFile); err == nil {
-		if err := config.RootConfig.ReadInConfig(); err != nil {
+		if err := DoitCmd.CmdConfigConfig.V.ReadInConfig(); err != nil {
 			log.Fatalln("reading initialization failed:", err)
 		}
 	}
@@ -129,7 +132,7 @@ func defaultGetCurrentAuthContextFn() string {
 	if Context != "" {
 		return Context
 	}
-	if authContext := config.RootConfig.GetString("context"); authContext != "" {
+	if authContext := DoitCmd.CmdConfigConfig.V.GetString("context"); authContext != "" {
 		return authContext
 	}
 	return defaultContext
@@ -194,17 +197,21 @@ func computeCmd() *Command {
 
 type flagOpt func(c *Command, name, key string)
 
+// key is already manually namespaced when requiredOpt is called
+// this flow is totally borked and will be cleaned up in a subsequent changeset
 func requiredOpt() flagOpt {
 	return func(c *Command, name, key string) {
 		c.MarkFlagRequired(key)
-
-		key = fmt.Sprintf("required.%s", key)
-		config.RootConfig.Set(key, true)
-
-		u := c.Flag(name).Usage
-		c.Flag(name).Usage = fmt.Sprintf("%s %s", u, requiredColor("(required)"))
+		DoitCmd.CmdConfigConfig.V.Set(fmt.Sprintf("required.%s", key), true)
+		c.Flag(name).Usage = fmt.Sprintf("%s %s", c.Flag(name).Usage, requiredColor("(required)"))
 	}
 }
+
+// All of these AddXXXFlags work by binding the flag to the root viper instance, then
+// manually managing the namespaces, relationships, etc. It's extremely brittle, high touch
+// and flaky. We're unwinding it in a series of changesets.
+//
+// Hold on to your hats!
 
 // AddStringFlag adds a string flag to a command.
 func AddStringFlag(cmd *Command, name, shorthand, dflt, desc string, opts ...flagOpt) {
@@ -215,14 +222,14 @@ func AddStringFlag(cmd *Command, name, shorthand, dflt, desc string, opts ...fla
 		o(cmd, name, fn)
 	}
 
-	config.RootConfig.BindPFlag(fn, cmd.Flags().Lookup(name))
+	DoitCmd.CmdConfigConfig.V.BindPFlag(fn, cmd.Flags().Lookup(name))
 }
 
 // AddIntFlag adds an integr flag to a command.
 func AddIntFlag(cmd *Command, name, shorthand string, def int, desc string, opts ...flagOpt) {
 	fn := flagName(cmd, name)
 	cmd.Flags().IntP(name, shorthand, def, desc)
-	config.RootConfig.BindPFlag(fn, cmd.Flags().Lookup(name))
+	DoitCmd.CmdConfigConfig.V.BindPFlag(fn, cmd.Flags().Lookup(name))
 
 	for _, o := range opts {
 		o(cmd, name, fn)
@@ -233,7 +240,7 @@ func AddIntFlag(cmd *Command, name, shorthand string, def int, desc string, opts
 func AddBoolFlag(cmd *Command, name, shorthand string, def bool, desc string, opts ...flagOpt) {
 	fn := flagName(cmd, name)
 	cmd.Flags().BoolP(name, shorthand, def, desc)
-	config.RootConfig.BindPFlag(fn, cmd.Flags().Lookup(name))
+	DoitCmd.CmdConfigConfig.V.BindPFlag(fn, cmd.Flags().Lookup(name))
 
 	for _, o := range opts {
 		o(cmd, name, fn)
@@ -244,7 +251,7 @@ func AddBoolFlag(cmd *Command, name, shorthand string, def bool, desc string, op
 func AddStringSliceFlag(cmd *Command, name, shorthand string, def []string, desc string, opts ...flagOpt) {
 	fn := flagName(cmd, name)
 	cmd.Flags().StringSliceP(name, shorthand, def, desc)
-	config.RootConfig.BindPFlag(fn, cmd.Flags().Lookup(name))
+	DoitCmd.CmdConfigConfig.V.BindPFlag(fn, cmd.Flags().Lookup(name))
 
 	for _, o := range opts {
 		o(cmd, name, fn)
@@ -271,9 +278,13 @@ type CmdRunner func(*CmdConfig) error
 // CmdConfig is a command configuration.
 type CmdConfig struct {
 	NS   string
-	Doit doctl.Config
 	Out  io.Writer
 	Args []string
+
+	// Config wraps a viper instance
+	Config *config.Config
+	// SSH wraps an ssh connection
+	SSH func(user, host, keyPath string, port int, opts ssh.Options) *ssh.Runner
 
 	initServices          func(*CmdConfig) error
 	getContextAccessToken func() string
@@ -306,17 +317,19 @@ type CmdConfig struct {
 }
 
 // NewCmdConfig creates an instance of a CmdConfig.
-func NewCmdConfig(ns string, dc doctl.Config, out io.Writer, args []string, initGodo bool) (*CmdConfig, error) {
+func NewCmdConfig(ns string, viper *config.Config, out io.Writer, args []string, initGodo bool) (*CmdConfig, error) {
 
 	cmdConfig := &CmdConfig{
-		NS:   ns,
-		Doit: dc,
-		Out:  out,
-		Args: args,
+		NS:     ns,
+		Out:    out,
+		Config: viper,
+		SSH:    ssh.SSH,
+		Args:   args,
 
 		initServices: func(c *CmdConfig) error {
 			accessToken := c.getContextAccessToken()
-			godoClient, err := c.Doit.GetGodoClient(Trace, accessToken)
+			apiURL := DoitCmd.CmdConfigConfig.V.GetString("api-url")
+			godoClient, err := config.GetGodoClient(Trace, apiURL, accessToken)
 			if err != nil {
 				return fmt.Errorf("unable to initialize DigitalOcean api client: %s", err)
 			}
@@ -348,18 +361,19 @@ func NewCmdConfig(ns string, dc doctl.Config, out io.Writer, args []string, init
 			return nil
 		},
 
+		// these details should get moved into config
 		getContextAccessToken: func() string {
 			context := Context
 			if context == "" {
-				context = config.RootConfig.GetString("context")
+				context = DoitCmd.CmdConfigConfig.V.GetString("context")
 			}
 			token := ""
 
 			switch context {
 			case defaultContext:
-				token = config.RootConfig.GetString(doctl.ArgAccessToken)
+				token = DoitCmd.CmdConfigConfig.V.GetString(doctl.ArgAccessToken)
 			default:
-				contexts := config.RootConfig.GetStringMapString("auth-contexts")
+				contexts := DoitCmd.CmdConfigConfig.V.GetStringMapString("auth-contexts")
 
 				token = contexts[context]
 			}
@@ -367,20 +381,21 @@ func NewCmdConfig(ns string, dc doctl.Config, out io.Writer, args []string, init
 			return token
 		},
 
+		// these details should get moved into config
 		setContextAccessToken: func(token string) {
 			context := Context
 			if context == "" {
-				context = config.RootConfig.GetString("context")
+				context = DoitCmd.CmdConfigConfig.V.GetString("context")
 			}
 
 			switch context {
 			case defaultContext:
-				config.RootConfig.Set(doctl.ArgAccessToken, token)
+				DoitCmd.CmdConfigConfig.V.Set(doctl.ArgAccessToken, token)
 			default:
-				contexts := config.RootConfig.GetStringMapString("auth-contexts")
+				contexts := DoitCmd.CmdConfigConfig.V.GetStringMapString("auth-contexts")
 				contexts[context] = token
 
-				config.RootConfig.Set("auth-contexts", contexts)
+				DoitCmd.CmdConfigConfig.V.Set("auth-contexts", contexts)
 			}
 		},
 	}
@@ -401,12 +416,12 @@ func (c *CmdConfig) Display(d displayers.Displayable) error {
 		Out:  c.Out,
 	}
 
-	columnList, err := c.Doit.GetString(c.NS, doctl.ArgFormat)
+	columnList, err := c.Config.GetString(c.NS, doctl.ArgFormat)
 	if err != nil {
 		return err
 	}
 
-	withHeaders, err := c.Doit.GetBool(c.NS, doctl.ArgNoHeader)
+	withHeaders, err := c.Config.GetBool(c.NS, doctl.ArgNoHeader)
 	if err != nil {
 		return err
 	}
@@ -424,14 +439,17 @@ func CmdBuilder(parent *Command, cr CmdRunner, cliText, desc string, out io.Writ
 }
 
 func cmdBuilderWithInit(parent *Command, cr CmdRunner, cliText, desc string, out io.Writer, initCmd bool, options ...cmdOption) *Command {
-	cc := &cobra.Command{
+
+	viperInstance := config.NewConfig()
+
+	cobraCommand := &cobra.Command{
 		Use:   cliText,
 		Short: desc,
 		Long:  desc,
 		Run: func(cmd *cobra.Command, args []string) {
 			c, err := NewCmdConfig(
 				cmdNS(cmd),
-				&doctl.LiveConfig{},
+				viperInstance,
 				out,
 				args,
 				initCmd,
@@ -443,7 +461,10 @@ func cmdBuilderWithInit(parent *Command, cr CmdRunner, cliText, desc string, out
 		},
 	}
 
-	c := &Command{Command: cc}
+	c := &Command{
+		Command:         cobraCommand,
+		CmdConfigConfig: viperInstance,
+	}
 
 	if parent != nil {
 		parent.AddCommand(c)
@@ -472,7 +493,7 @@ func writeConfig() error {
 
 	defer f.Close()
 
-	b, err := yaml.Marshal(config.RootConfig.AllSettings())
+	b, err := yaml.Marshal(DoitCmd.CmdConfigConfig.V.AllSettings())
 	if err != nil {
 		return errors.New("unable to encode configuration to YAML format")
 	}
@@ -486,7 +507,7 @@ func writeConfig() error {
 }
 
 func defaultConfigFileWriter() (io.WriteCloser, error) {
-	cfgFile := config.RootConfig.GetString("config")
+	cfgFile := DoitCmd.CmdConfigConfig.V.GetString("config")
 	f, err := os.Create(cfgFile)
 	if err != nil {
 		return nil, err

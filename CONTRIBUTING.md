@@ -110,7 +110,7 @@ Writing a unit test for a new command typically looks like this,
 `github.com/stretchr/testify/assert` for our assertions. Test cases typically look like the following:
     ```go
     func TestMyNewCommand(t *testing.T) {
-        // Use the `withTestClient` helper to access our tets config, as well as the godo API
+        // Use the `withTestClient` helper to access our test config, as well as the godo API
         // mocks.
         withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
             // Mock the godo API call.
@@ -120,7 +120,7 @@ Writing a unit test for a new command typically looks like this,
             config.Args = append(config.Args, "some-value")
 
             // Optionally add a CLI flag.
-            config.Doit.Set(config.NS, "--my-flag", "some-value")
+            config.Config.Set(config.NS, "--my-flag", "some-value")
 
             // Execute your command.
             err := RunMyNewCommand(config)

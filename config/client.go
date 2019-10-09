@@ -11,13 +11,55 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package doctl
+package config
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
+	"strconv"
+
+	"github.com/digitalocean/doctl"
+	"github.com/digitalocean/godo"
+
+	"golang.org/x/oauth2"
 )
+
+// GetGodoClient returns a GodoClient.
+func GetGodoClient(trace bool, apiURL, accessToken string) (*godo.Client, error) {
+	if accessToken == "" {
+		return nil, fmt.Errorf("access token is required. (hint: run 'doctl auth init')")
+	}
+
+	tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: accessToken})
+	oauthClient := oauth2.NewClient(context.Background(), tokenSource)
+
+	if trace {
+		r := newRecorder(oauthClient.Transport)
+
+		go func() {
+			for {
+				select {
+				case msg := <-r.req:
+					log.Println("->", strconv.Quote(msg))
+				case msg := <-r.resp:
+					log.Println("<-", strconv.Quote(msg))
+				}
+			}
+		}()
+
+		oauthClient.Transport = r
+	}
+
+	args := []godo.ClientOpt{godo.SetUserAgent("doctl/" + doctl.DoitVersion.String())}
+	if apiURL != "" {
+		args = append(args, godo.SetBaseURL(apiURL))
+	}
+
+	return godo.New(oauthClient, args...)
+}
 
 // recorder traces http connections. It sends the output to a request and
 // response channels.
