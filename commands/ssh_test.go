@@ -18,8 +18,6 @@ import (
 	"testing"
 
 	"github.com/digitalocean/doctl"
-	sshRunner "github.com/digitalocean/doctl/pkg/runner"
-	"github.com/digitalocean/doctl/pkg/runner/mocks"
 	"github.com/digitalocean/doctl/pkg/ssh"
 
 	"github.com/spf13/cobra"
@@ -77,15 +75,15 @@ func TestSSH_DropletWithNoPublic(t *testing.T) {
 
 			err := RunSSH(config)
 			assert.EqualError(t, err, "could not find droplet address")
-	})
+		})
 }
 
 func TestSSH_CustomPort(t *testing.T) {
 	withTestClient(t,
 		func(config *CmdConfig, tm *tcMocks) {
-			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) sshRunner.Runner {
+			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) *ssh.Runner {
 				assert.Equal(t, 2222, port)
-				return &runner.MockRunner{}
+				return &ssh.Runner{}
 			}
 
 			tm.droplets.EXPECT().List().Return(testDropletList, nil)
@@ -101,9 +99,9 @@ func TestSSH_CustomPort(t *testing.T) {
 func TestSSH_CustomUser(t *testing.T) {
 	withTestClient(t,
 		func(config *CmdConfig, tm *tcMocks) {
-			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) sshRunner.Runner {
+			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) *ssh.Runner {
 				assert.Equal(t, "foobar", user)
-				return &runner.MockRunner{}
+				return &ssh.Runner{}
 			}
 
 			tm.droplets.EXPECT().List().Return(testDropletList, nil)
@@ -113,15 +111,15 @@ func TestSSH_CustomUser(t *testing.T) {
 
 			err := RunSSH(config)
 			assert.NoError(t, err)
-	})
+		})
 }
 
 func TestSSH_AgentForwarding(t *testing.T) {
 	withTestClient(t,
 		func(config *CmdConfig, tm *tcMocks) {
-			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) sshRunner.Runner {
+			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) *ssh.Runner {
 				assert.Equal(t, true, opts[doctl.ArgsSSHAgentForwarding])
-				return &runner.MockRunner{}
+				return &ssh.Runner{}
 			}
 
 			tm.droplets.EXPECT().List().Return(testDropletList, nil)
@@ -131,15 +129,15 @@ func TestSSH_AgentForwarding(t *testing.T) {
 
 			err := RunSSH(config)
 			assert.NoError(t, err)
-	})
+		})
 }
 
 func TestSSH_CommandExecuting(t *testing.T) {
 	withTestClient(t,
 		func(config *CmdConfig, tm *tcMocks) {
-			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) sshRunner.Runner {
+			config.SSH = func(user, host, keyPath string, port int, opts ssh.Options) *ssh.Runner {
 				assert.Equal(t, "uptime", opts[doctl.ArgSSHCommand])
-				return &runner.MockRunner{}
+				return &ssh.Runner{}
 			}
 
 			tm.droplets.EXPECT().List().Return(testDropletList, nil)
@@ -148,7 +146,7 @@ func TestSSH_CommandExecuting(t *testing.T) {
 
 			err := RunSSH(config)
 			assert.NoError(t, err)
-	})
+		})
 }
 
 func Test_extractHostInfo(t *testing.T) {
