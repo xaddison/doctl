@@ -66,48 +66,17 @@ var (
 func init() {
 	var cfgFile string
 
-	initConfig()
-
 	rootPFlagSet := DoitCmd.PersistentFlags()
 	rootPFlagSet.StringVarP(&cfgFile, "config", "c",
 		filepath.Join(configHome(), defaultConfigName), "config file")
-	DoitCmd.CmdConfigConfig.V.BindPFlag("config", rootPFlagSet.Lookup("config"))
-
 	rootPFlagSet.StringVarP(&APIURL, "api-url", "u", "", "Override default API V2 endpoint")
-	DoitCmd.CmdConfigConfig.V.BindPFlag("api-url", rootPFlagSet.Lookup("api-url"))
-
 	rootPFlagSet.StringVarP(&Token, doctl.ArgAccessToken, "t", "", "API V2 Access Token")
-	DoitCmd.CmdConfigConfig.V.BindPFlag(doctl.ArgAccessToken, rootPFlagSet.Lookup(doctl.ArgAccessToken))
-
 	rootPFlagSet.StringVarP(&Output, doctl.ArgOutput, "o", "text", "output format [text|json]")
-	DoitCmd.CmdConfigConfig.V.BindPFlag(doctl.ArgOutput, rootPFlagSet.Lookup(doctl.ArgOutput))
-
 	rootPFlagSet.StringVarP(&Context, doctl.ArgContext, "", doctl.ArgDefaultContext, "authentication context")
 	rootPFlagSet.BoolVarP(&Trace, "trace", "", false, "trace api access")
 	rootPFlagSet.BoolVarP(&Verbose, doctl.ArgVerbose, "v", false, "verbose output")
 
 	addCommands()
-
-	cobra.OnInitialize(initConfig)
-}
-
-func initConfig() {
-	DoitCmd.CmdConfigConfig.V.SetEnvPrefix("DIGITALOCEAN")
-	DoitCmd.CmdConfigConfig.V.AutomaticEnv()
-	DoitCmd.CmdConfigConfig.V.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	DoitCmd.CmdConfigConfig.V.SetConfigType("yaml")
-
-	cfgFile := DoitCmd.CmdConfigConfig.V.GetString("config")
-	DoitCmd.CmdConfigConfig.V.SetConfigFile(cfgFile)
-
-	DoitCmd.CmdConfigConfig.V.SetDefault(doctl.ArgOutput, "text")
-	DoitCmd.CmdConfigConfig.V.SetDefault(doctl.ArgContext, doctl.ArgDefaultContext)
-
-	if _, err := os.Stat(cfgFile); err == nil {
-		if err := DoitCmd.CmdConfigConfig.V.ReadInConfig(); err != nil {
-			log.Fatalln("reading initialization failed:", err)
-		}
-	}
 }
 
 // in case we ever want to change this, or let folks configure it...

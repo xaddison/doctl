@@ -15,6 +15,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/digitalocean/doctl"
@@ -36,20 +37,19 @@ func NewConfig() *Config {
 	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	v.SetConfigType("yaml")
 
-	v.SetDefault("output", "text")
-	v.SetDefault("context", doctl.ArgDefaultContext)
+	v.SetDefault(doctl.ArgOutput, "text")
+	v.SetDefault(doctl.ArgContext, doctl.ArgDefaultContext)
 
 	return &Config{V: v}
 }
 
-func (c *Config) Load(cmd *cobra.Command, cfgFile string) error {
+func (c *Config) Load(cmd *cobra.Command, cfgFile string) {
 	c.V.SetConfigFile(cfgFile)
 	if err := c.V.ReadInConfig(); err != nil {
-		return err
+		log.Fatalln("reading initialization failed:", err)
 	}
 
 	c.V.BindPFlags(cmd.Flags())
-	return nil
 }
 
 // Set sets a config key.
