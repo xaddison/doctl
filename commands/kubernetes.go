@@ -51,6 +51,19 @@ const (
 	execCredentialKind = "ExecCredential"
 )
 
+var getCurrentAuthContextFn = defaultGetCurrentAuthContextFn
+
+func defaultGetCurrentAuthContextFn() string {
+	if Context != "" {
+		return Context
+	}
+	if authContext := DoitCmd.CmdConfigConfig.V.GetString("context"); authContext != "" {
+		return authContext
+	}
+	return defaultContext
+}
+
+
 func errNoClusterByName(name string) error {
 	return fmt.Errorf("no cluster goes by the name %q", name)
 }
