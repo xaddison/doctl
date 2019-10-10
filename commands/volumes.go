@@ -17,9 +17,11 @@ import (
 	"fmt"
 
 	"github.com/digitalocean/doctl"
+	"github.com/digitalocean/doctl/config"
 	"github.com/digitalocean/doctl/commands/displayers"
 	"github.com/digitalocean/doctl/do"
 	"github.com/digitalocean/godo"
+
 	"github.com/dustin/go-humanize"
 	"github.com/gobwas/glob"
 	"github.com/spf13/cobra"
@@ -69,6 +71,9 @@ func Volume() *Command {
 
 // RunVolumeList returns a list of volumes.
 func RunVolumeList(c *CmdConfig) error {
+	conf := config.NewConfig()
+
+	conf.Load(c.CobraCommand, DoitCmd.CmdConfigConfig.V.GetString("config"))
 
 	al := c.Volumes()
 

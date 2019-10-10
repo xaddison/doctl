@@ -27,6 +27,7 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/digitalocean/doctl"
+	"github.com/digitalocean/doctl/config"
 	"github.com/digitalocean/doctl/commands/displayers"
 	"github.com/digitalocean/doctl/do"
 	"github.com/digitalocean/godo"

@@ -19,7 +19,12 @@ import (
 
 	"github.com/digitalocean/doctl"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+const (
+	DefaultContext = "default" // default authentication context
 )
 
 // LiveConfig is an implementation of Config for live values.
@@ -29,7 +34,26 @@ type Config struct {
 
 // NewConfig returns a config with a new viper instance
 func NewConfig() *Config {
-	return &Config{V: viper.New()}
+	v := viper.New()
+	v.SetEnvPrefix("DIGITALOCEAN")
+	v.AutomaticEnv()
+	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	v.SetConfigType("yaml")
+
+	v.SetDefault("output", "text")
+	v.SetDefault("context", DefaultContext)
+
+	return &Config{V: v}
+}
+
+func (c *Config) Load(cmd *cobra.Command, cfgFile string) error {
+	c.V.SetConfigFile(cfgFile)
+	if err := c.V.ReadInConfig(); err != nil {
+		return err
+	}
+
+	c.V.BindPFlags(cmd.Flags())
+	return nil
 }
 
 // Set sets a config key.
