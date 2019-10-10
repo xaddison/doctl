@@ -27,10 +27,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	defaultContext = "default" // default authentication context
-)
-
 // CmdConfig is a command configuration.
 type CmdConfig struct {
 	NS           string
@@ -128,7 +124,7 @@ func NewCmdConfig(ns string, cobraCommand *cobra.Command, out io.Writer, args []
 			token := ""
 
 			switch context {
-			case defaultContext:
+			case doctl.ArgDefaultContext:
 				token = DoitCmd.CmdConfigConfig.V.GetString(doctl.ArgAccessToken)
 			default:
 				contexts := DoitCmd.CmdConfigConfig.V.GetStringMapString("auth-contexts")
@@ -147,7 +143,8 @@ func NewCmdConfig(ns string, cobraCommand *cobra.Command, out io.Writer, args []
 			}
 
 			switch context {
-			case defaultContext:
+			case doctl.ArgDefaultContext:
+				DoitCmd.CmdConfigConfig.V.Set(doctl.ArgAccessToken, token)
 				DoitCmd.CmdConfigConfig.V.Set(doctl.ArgAccessToken, token)
 			default:
 				contexts := DoitCmd.CmdConfigConfig.V.GetStringMapString("auth-contexts")

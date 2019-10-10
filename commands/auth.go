@@ -135,7 +135,7 @@ func displayAuthContexts(out io.Writer, currentContext string, contexts map[stri
 	// Because the default context isn't present on the auth-contexts field,
 	// we add it manually so that it's always included in the output, and so
 	// we can check if it's the current context.
-	contexts[defaultContext] = true
+	contexts[doctl.ArgDefaultContext] = true
 
 	// Extract and sort the map keys so that the order that we display the
 	// auth contexts is consistent.

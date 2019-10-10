@@ -23,10 +23,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	DefaultContext = "default" // default authentication context
-)
-
 // LiveConfig is an implementation of Config for live values.
 type Config struct {
 	V *viper.Viper
@@ -41,7 +37,7 @@ func NewConfig() *Config {
 	v.SetConfigType("yaml")
 
 	v.SetDefault("output", "text")
-	v.SetDefault("context", DefaultContext)
+	v.SetDefault("context", doctl.ArgDefaultContext)
 
 	return &Config{V: v}
 }

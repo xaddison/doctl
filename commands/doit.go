@@ -77,12 +77,12 @@ func init() {
 	DoitCmd.CmdConfigConfig.V.BindPFlag("api-url", rootPFlagSet.Lookup("api-url"))
 
 	rootPFlagSet.StringVarP(&Token, doctl.ArgAccessToken, "t", "", "API V2 Access Token")
-	DoitCmd.CmdConfigConfig.V.BindPFlag(doctl.ArgAccessToken, rootPFlagSet.Lookup("access-token"))
+	DoitCmd.CmdConfigConfig.V.BindPFlag(doctl.ArgAccessToken, rootPFlagSet.Lookup(doctl.ArgAccessToken))
 
-	rootPFlagSet.StringVarP(&Output, "output", "o", "text", "output format [text|json]")
-	DoitCmd.CmdConfigConfig.V.BindPFlag("output", rootPFlagSet.Lookup("output"))
+	rootPFlagSet.StringVarP(&Output, doctl.ArgOutput, "o", "text", "output format [text|json]")
+	DoitCmd.CmdConfigConfig.V.BindPFlag(doctl.ArgOutput, rootPFlagSet.Lookup(doctl.ArgOutput))
 
-	rootPFlagSet.StringVarP(&Context, doctl.ArgContext, "", defaultContext, "authentication context")
+	rootPFlagSet.StringVarP(&Context, doctl.ArgContext, "", doctl.ArgDefaultContext, "authentication context")
 	rootPFlagSet.BoolVarP(&Trace, "trace", "", false, "trace api access")
 	rootPFlagSet.BoolVarP(&Verbose, doctl.ArgVerbose, "v", false, "verbose output")
 
@@ -100,8 +100,8 @@ func initConfig() {
 	cfgFile := DoitCmd.CmdConfigConfig.V.GetString("config")
 	DoitCmd.CmdConfigConfig.V.SetConfigFile(cfgFile)
 
-	DoitCmd.CmdConfigConfig.V.SetDefault("output", "text")
-	DoitCmd.CmdConfigConfig.V.SetDefault("context", defaultContext)
+	DoitCmd.CmdConfigConfig.V.SetDefault(doctl.ArgOutput, "text")
+	DoitCmd.CmdConfigConfig.V.SetDefault(doctl.ArgContext, doctl.ArgDefaultContext)
 
 	if _, err := os.Stat(cfgFile); err == nil {
 		if err := DoitCmd.CmdConfigConfig.V.ReadInConfig(); err != nil {

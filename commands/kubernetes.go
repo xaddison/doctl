@@ -27,7 +27,6 @@ import (
 
 	"github.com/blang/semver"
 	"github.com/digitalocean/doctl"
-	"github.com/digitalocean/doctl/config"
 	"github.com/digitalocean/doctl/commands/displayers"
 	"github.com/digitalocean/doctl/do"
 	"github.com/digitalocean/godo"
@@ -61,7 +60,7 @@ func defaultGetCurrentAuthContextFn() string {
 	if authContext := DoitCmd.CmdConfigConfig.V.GetString("context"); authContext != "" {
 		return authContext
 	}
-	return defaultContext
+	return doctl.ArgDefaultContext
 }
 
 
