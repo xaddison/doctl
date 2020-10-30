@@ -2,7 +2,7 @@
 
 <!-- Non emacs users, feel free to update the toc by hand. -->
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
+**Table of Contents** 
 
 - [Contributing to doctl](#contributing-to-doctl)
     - [Issues](#issues)
